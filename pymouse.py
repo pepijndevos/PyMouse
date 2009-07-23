@@ -29,7 +29,7 @@ elif sys.platform == 'win32':
     
     blob = FInputs( (0, click), (0, release) )
     
-class PyMouse(Object):
+class PyMouse(object):
     
     def clickMouse(self, x, y, button):
         if sys.platform == 'darwin':
