@@ -28,6 +28,11 @@ elif sys.platform == 'win32':
     release.mi = MouseInput(0, 0, 0, 4, 0, pointer(extra))
     
     blob = FInputs( (0, click), (0, release) )
+else:
+    try:
+        from xtest import XTest
+    except ImportError:
+        print "Your system is not supported, make sure you have XTest enabled"
     
 class PyMouse(object):
     
@@ -38,10 +43,13 @@ class PyMouse(object):
             CGPostMouseEvent((x, y), 1, button, 1)
             CGPostMouseEvent((x, y), 1, button, 0)
         elif sys.platform == 'win32':
-            #windll.user32.SetCursorPos(x, y)
+            windll.user32.SetCursorPos(x, y)
             windll.user32.SendInput(2,pointer(blob),sizeof(blob[0]))
         else:
-            print 'Clicking the mouse is not supported on your system.'
+            X = XTest()
+            X.fakeMotionEvent(x, y)
+            X.fakeButtonEvent(button, True)
+            X.fakeButtonEvent(button, False)
     
     def moveMouse(self, x, y):
         if sys.platform == 'darwin':
@@ -51,4 +59,16 @@ class PyMouse(object):
         elif sys.platform == 'win32':
             windll.user32.SetCursorPos(x, y)
         else:
-            print 'Moving the mouse is not supported on your system.'
+            X = XTest()
+            X.fakeMotionEvent(x, y)
+
+if __name__ == "__main__":
+    import random, time
+    m = PyMouse()
+    m.clickMouse(random.randint(0, 500), random.randint(0, 500), 1)
+    time.sleep(5)
+    m.clickMouse(random.randint(0, 500), random.randint(0, 500), 2)
+    time.sleep(5)
+    m.clickMouse(random.randint(0, 500), random.randint(0, 500), 2)
+    time.sleep(5)
+    m.moveMouse(random.randint(0, 500), random.randint(0, 500))
