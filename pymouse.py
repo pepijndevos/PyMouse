@@ -36,7 +36,7 @@ else:
     
 class PyMouse(object):
     
-    def clickMouse(self, x, y, button):
+    def click(self, x, y, button):
         if sys.platform == 'darwin':
             bndl = objc.loadBundle('CoreGraphics', globals(), '/System/Library/Frameworks/ApplicationServices.framework')
             objc.loadBundleFunctions(bndl, globals(), [('CGPostMouseEvent', 'v{CGPoint=ff}III')])
@@ -51,7 +51,7 @@ class PyMouse(object):
             X.fakeButtonEvent(button, True)
             X.fakeButtonEvent(button, False)
     
-    def moveMouse(self, x, y):
+    def move(self, x, y):
         if sys.platform == 'darwin':
             bndl = objc.loadBundle('CoreGraphics', globals(), '/System/Library/Frameworks/ApplicationServices.framework')
             objc.loadBundleFunctions(bndl, globals(), [('CGWarpMouseCursorPosition', 'v{CGPoint=ff}')])
