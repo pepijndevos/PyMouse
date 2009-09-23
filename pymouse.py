@@ -1,3 +1,4 @@
+# -*- coding: iso-8859-1 -*-
 import sys
 
 LEFT = 0
@@ -9,7 +10,7 @@ if sys.platform == 'darwin':
 elif sys.platform == 'win32':
     clicks = [2, 8, 32]
     releases = [4, 16, 64]
-    
+
     from ctypes import *
     PUL = POINTER(c_ulong)
     class MouseInput(Structure):
@@ -19,51 +20,77 @@ elif sys.platform == 'win32':
                  ("dwFlags", c_ulong),
                  ("time",c_ulong),
                  ("dwExtraInfo", PUL)]
-    
+
     class Input_I(Union):
         _fields_ = [("mi", MouseInput)]
-    
+
     class Input(Structure):
         _fields_ = [("type", c_ulong), ("ii", Input_I)]
 
     FInputs = Input * 2
     extra = c_ulong(0)
-    
+
     click = Input_I()
     click.mi = MouseInput(0, 0, 0, 2, 0, pointer(extra))
     release = Input_I()
     release.mi = MouseInput(0, 0, 0, 4, 0, pointer(extra))
-    
+
     blob = FInputs( (0, click), (0, release) )
 else:
     LEFT = 1
     RIGHT = 2
     MIDDLE = 3
     try:
-        from xtest import XTest
+        #from xtest import XTest
+        from Xlib import X, display
+        import Xlib.protocol.event
+        import Xlib.ext.xtest
     except ImportError:
-        print "Your system is not supported, make sure you have XTest enabled"
-    
+        print "Your system is not supported"
+
 class PyMouse(object):
-    
+
     def click(self, x, y, button = LEFT):
         if sys.platform == 'darwin':
-            bndl = objc.loadBundle('CoreGraphics', globals(), '/System/Library/Frameworks/ApplicationServices.framework')
-            objc.loadBundleFunctions(bndl, globals(), [('CGPostMouseEvent', 'v{CGPoint=ff}IIIII')])
+            bndl = objc.loadBundle('CoreGraphics', globals(), \
+                                    '/System/Library/Frameworks/ApplicationServices.framework')
+            objc.loadBundleFunctions(bndl, globals(), [('CGPostMouseEvent', \
+                                    'v{CGPoint=ff}IIIII')])
             button_list = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
             CGPostMouseEvent((float(x), float(y)), 1, 3, *button_list[button])
             CGPostMouseEvent((float(x), float(y)), 1, 3, 0, 0, 0)
+
         elif sys.platform == 'win32':
             windll.user32.SetCursorPos(x, y)
             blob[0].ii.mi.dwFlags = clicks[button]
             blob[1].ii.mi.dwFlags = releases[button]
             windll.user32.SendInput(2,pointer(blob),sizeof(blob[0]))
+
         else:
-            X = XTest()
-            X.fakeMotionEvent(x, y)
-            X.fakeButtonEvent(button, True)
-            X.fakeButtonEvent(button, False)
-    
+            '''change from included XTEST to Xlib'''
+            d= display.Display()
+            try:
+                ##this pure python-Xlib, is a mess but now works fine
+                ev=Xlib.protocol.event.ButtonPress(
+                    detail= X.Button1,
+                    time= X.CurrentTime,
+                    root= d.screen().root,
+                    window= d.get_input_focus().focus,
+                    same_screen= 1,
+                    child= X.NONE,
+                    root_x= x,
+                    root_y= x,
+                    event_x= x,
+                    event_y= x,
+                    state= Xlib.X.NONE
+                    )
+                d.send_event(ev)
+                print "xlib click"
+            except:
+                ##Using xlib-xtest fake input
+                Xlib.ext.xtest.fake_input (d, X.ButtonPress, button)
+            d.sync()
+
     def move(self, x, y):
         if sys.platform == 'darwin':
             bndl = objc.loadBundle('CoreGraphics', globals(), '/System/Library/Frameworks/ApplicationServices.framework')
@@ -72,23 +99,54 @@ class PyMouse(object):
         elif sys.platform == 'win32':
             windll.user32.SetCursorPos(x, y)
         else:
-            X = XTest()
-            X.fakeMotionEvent(x, y)
+            '''change from included XTEST to Xlib'''
+            d= display.Display()
+            d.screen().root.warp_pointer(x, y)
+            d.sync()
+
+    def whereis(self):
+        if sys.platform == 'darwin':
+            #need to know how
+            return 0, 0
+        elif sys.platform == 'win32':
+            #need to know how
+            return 0, 0
+        else:
+            '''this is pure Xlib'''
+            d= display.Display()
+            coord= d.screen().root.query_pointer()._data
+            return coord["root_x"], coord["root_y"]
+
+    def screen_size(self):
+        if sys.platform == 'darwin':
+            #need to know how
+            width, height= 0, 0
+        elif sys.platform == 'win32':
+            #need to know how
+            width, height= 0, 0
+        else:
+            '''this is pure Xlib'''
+            d= display.Display()
+            width= d.screen().width_in_pixels
+            height= d.screen().height_in_pixels
+        return (width, height)
 
 if __name__ == "__main__":
     import random, time
     m = PyMouse()
+    try:
+        size= m.screen_size()
+        print "size: %s" % (str(size))
+
+        pos= (random.randint(0, size[0]), random.randint(0, size[1]))
+    except:
+        pos= (random.randint(0, 250), random.randint(0, 250))
+    print "Position: %s" % (str(pos))
+
     print 'move'
-    m.move(random.randint(0, 500), random.randint(0, 500))
+    m.move(pos[0], pos[1])
+
     time.sleep(5)
+
     print 'click'
-    m.click(400, 500, LEFT)
-    time.sleep(5)
-    print 'click'
-    m.click(random.randint(0, 500), random.randint(0, 500), RIGHT)
-    time.sleep(5)
-    print 'click'
-    m.click(random.randint(0, 500), random.randint(0, 500), MIDDLE)
-    time.sleep(5)
-    print 'move'
-    m.move(random.randint(0, 500), random.randint(0, 500))
+    m.click(pos[0], pos[1], LEFT)
