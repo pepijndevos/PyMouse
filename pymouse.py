@@ -12,6 +12,8 @@ elif sys.platform == 'win32':
     releases = [4, 16, 64]
 
     from ctypes import *
+    from win32api import GetSystemMetrics
+    
     PUL = POINTER(c_ulong)
     class MouseInput(Structure):
         _fields_ = [("dx", c_long),
@@ -42,8 +44,9 @@ else:
     MIDDLE = 3
     try:
         #from xtest import XTest
-        from Xlib import X, display
-        import Xlib.protocol.event
+        from Xlib.display import Display
+		from Xlib import X
+		from Xlib.protocol import event
         import Xlib.ext.xtest
     except ImportError:
         print "Your system is not supported"
@@ -67,29 +70,48 @@ class PyMouse(object):
             windll.user32.SendInput(2,pointer(blob),sizeof(blob[0]))
 
         else:
-            '''change from included XTEST to Xlib'''
-            d= display.Display()
+            display = Display(':0') #Default display fails on Mac
+            focus = display.get_input_focus().focus
+			root = display.screen().root
+			rel = focus.translate_coords(root, x, y)
+			button_list = [X.Button1, X.Button2, X.Button3]
+			
             try:
-                ##this pure python-Xlib, is a mess but now works fine
-                ev=Xlib.protocol.event.ButtonPress(
-                    detail= X.Button1,
-                    time= X.CurrentTime,
-                    root= d.screen().root,
-                    window= d.get_input_focus().focus,
-                    same_screen= 1,
-                    child= X.NONE,
-                    root_x= x,
-                    root_y= x,
-                    event_x= x,
-                    event_y= x,
-                    state= Xlib.X.NONE
-                    )
-                d.send_event(ev)
-                print "xlib click"
+				mousePress = event.ButtonPress(
+				    time=X.CurrentTime,
+				    root=root,
+				    window=focus,
+				    same_screen=1,
+				    child=X.NONE,
+				    root_x=x,
+				    root_y=y,
+				    event_x=rel.x,
+				    event_y=rel.y,
+				    state=0,
+				    detail=button_list[button]
+				    )
+				
+				mouseRealease = event.ButtonRelease(
+				    time=X.CurrentTime,
+				    root=root,
+				    window=focus,
+				    same_screen=1,
+				    child=X.NONE,
+				    root_x=x,
+				    root_y=y,
+				    event_x=rel.x,
+				    event_y=rel.y,
+				    state=1,
+				    detail=button_list[button]
+				    )
+				 
+				focus.send_event(mousePress)
+				focus.send_event(mouseRealease)
             except:
                 ##Using xlib-xtest fake input
+                display.screen().root.warp_pointer(x, y) # I believe you where not setting the position
                 Xlib.ext.xtest.fake_input (d, X.ButtonPress, button)
-            d.sync()
+            display.sync()
 
     def move(self, x, y):
         if sys.platform == 'darwin':
@@ -99,10 +121,9 @@ class PyMouse(object):
         elif sys.platform == 'win32':
             windll.user32.SetCursorPos(x, y)
         else:
-            '''change from included XTEST to Xlib'''
-            d= display.Display()
-            d.screen().root.warp_pointer(x, y)
-            d.sync()
+            display = Display(':0')
+            display.screen().root.warp_pointer(x, y)
+            display.sync()
 
     def whereis(self):
         if sys.platform == 'darwin':
@@ -112,9 +133,8 @@ class PyMouse(object):
             #need to know how
             return 0, 0
         else:
-            '''this is pure Xlib'''
-            d= display.Display()
-            coord= d.screen().root.query_pointer()._data
+            display = display.Display()
+            coord = display.screen().root.query_pointer()._data
             return coord["root_x"], coord["root_y"]
 
     def screen_size(self):
@@ -122,13 +142,13 @@ class PyMouse(object):
             #need to know how
             width, height= 0, 0
         elif sys.platform == 'win32':
-            #need to know how
-            width, height= 0, 0
+        	#untested
+            width = GetSystemMetrics(0)
+            height = GetSystemMetrics(1)
         else:
-            '''this is pure Xlib'''
-            d= display.Display()
-            width= d.screen().width_in_pixels
-            height= d.screen().height_in_pixels
+            display = display.Display()
+            width = display.screen().width_in_pixels
+            height = display.screen().height_in_pixels
         return (width, height)
 
 if __name__ == "__main__":
