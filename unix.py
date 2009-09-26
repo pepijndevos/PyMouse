@@ -5,7 +5,7 @@ from Xlib.protocol import event
 import Xlib.ext.xtest
 from pymouse import PyMouseMeta
 
-display = Display()
+display = Display(":0")
 root = display.screen().root
 
 class PyMouse(PyMouseMeta):

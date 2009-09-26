@@ -3,17 +3,17 @@ import sys
 from abc import ABCMeta
 
 class PyMouseMeta:
-    __metaclass__ = ABCMeta
-    
-    def press(self, x, y, button = 0):
-    	"""Press the mouse on a givven x, y and button.
+	__metaclass__ = ABCMeta
+	
+	def press(self, x, y, button = 0):
+		"""Press the mouse on a givven x, y and button.
 		Button is defined as 0 = left, 1 = middle, 2 = right."""
 		pass
-    
-    def release(self, x, y):
-    	"""Release all mouse buttons"""
-    	pass
-    
+	
+	def release(self, x, y):
+		"""Release all mouse buttons"""
+		pass
+	
 	def click(self, x, y, button = 0):
 		"""Click the mouse on a givven x, y and button.
 		Button is defined as 0 = left, 1 = middle, 2 = right."""

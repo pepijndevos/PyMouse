@@ -8,7 +8,7 @@ objc.loadBundleFunctions(bndl, globals(), [('CGWarpMouseCursorPosition', 'v{CGPo
 
 class PyMouse(UnixPyMouse):
 	def press(self, x, y, button = 0):
-		button_list = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+		button_list = [[1, 0, 0], [0, 0, 1], [0, 1, 0]]
 		CGPostMouseEvent((float(x), float(y)), 1, 3, *button_list[button])
 	
 	def release(self, x, y, button = 0):
