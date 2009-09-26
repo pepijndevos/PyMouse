@@ -4,18 +4,18 @@ from abc import ABCMeta, abstractmethod
 
 class PyMouseMeta:
 	__metaclass__ = ABCMeta
-	
+
 	@abstractmethod
 	def press(self, x, y, button = 0):
 		"""Press the mouse on a givven x, y and button.
 		Button is defined as 0 = left, 1 = middle, 2 = right."""
 		pass
-	
+
 	@abstractmethod
 	def release(self, x, y):
 		"""Release all mouse buttons"""
 		pass
-	
+
 	def click(self, x, y, button = 0):
 		"""Click the mouse on a givven x, y and button.
 		Button is defined as 0 = left, 1 = middle, 2 = right."""
@@ -42,8 +42,8 @@ class PyMouseMeta:
 if sys.platform == 'darwin':
 	from mac import PyMouse
 
-if sys.platform == 'win32':
+elif sys.platform == 'win32':
 	from windows import PyMouse
 
-if sys.platform != 'win32' and sys.platform != 'darwin':
+elif sys.platform != 'win32' and sys.platform != 'darwin':
 	from unix import PyMouse
