@@ -45,5 +45,5 @@ if sys.platform == 'darwin':
 elif sys.platform == 'win32':
 	from windows import PyMouse
 
-elif sys.platform != 'win32' and sys.platform != 'darwin':
+else:
 	from unix import PyMouse

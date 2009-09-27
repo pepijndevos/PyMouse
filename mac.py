@@ -13,6 +13,10 @@ class PyMouse(UnixPyMouse):
 	
 	def release(self, x, y, button = 0):
 		CGPostMouseEvent((float(x), float(y)), 1, 3, 0, 0, 0)
-
+		
+	def click(self, x, y, button = 0):
+		self.press(x, y, button)
+		self.release(x, y, button)
+		
 	def move(self, x, y):
 		CGWarpMouseCursorPosition((float(x), float(y)))
