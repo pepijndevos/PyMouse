@@ -32,6 +32,10 @@ release.mi = MouseInput(0, 0, 0, 4, 0, pointer(extra))
 
 blob = FInputs( (0, click), (0, release) )
 
+class POINT(Structure):
+	_fields_ = [("x", c_ulong),
+				("y", c_ulong)]
+
 class PyMouse(PyMouseMeta):
 	def press(self, x, y, button = 0):
 		windll.user32.SetCursorPos(x, y)
