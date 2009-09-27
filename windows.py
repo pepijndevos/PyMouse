@@ -45,6 +45,11 @@ class PyMouse(PyMouseMeta):
 
 	def move(self, x, y):
 		windll.user32.SetCursorPos(x, y)
+	
+	def position(self):
+		pt = POINT()
+		windll.user32.GetCursorPos(byref(pt))
+		return pt.x, pt.y
 
 	def screen_size(self):
 		width = GetSystemMetrics(0)
