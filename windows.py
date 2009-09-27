@@ -58,3 +58,4 @@ class PyMouse(PyMouseMeta):
 	def screen_size(self):
 		width = GetSystemMetrics(0)
 		height = GetSystemMetrics(1)
+		return width, height
