@@ -67,7 +67,7 @@ class PyMouse(PyMouseMeta):
 		except:
 			# Using xlib-xtest fake input
 			root.warp_pointer(x, y) # I believe you where not setting the position
-			Xlib.ext.xtest.fake_input (display, X.ButtonPress, button)
+			Xlib.ext.xtest.fake_input (display, X.ButtonPress, button + 1)
 
 		display.sync()
 
@@ -82,4 +82,4 @@ class PyMouse(PyMouseMeta):
 	def screen_size(self):
 		width = display.screen().width_in_pixels
 		height = display.screen().height_in_pixels
-		return (width, height)
+		return width, height
