@@ -1,49 +1,48 @@
 # -*- coding: iso-8859-1 -*-
 import sys
-from abc import ABCMeta, abstractmethod
 
-class PyMouseMeta:
-	__metaclass__ = ABCMeta
+class PyMouseMeta(object):
 
-	@abstractmethod
-	def press(self, x, y, button = 0):
-		"""Press the mouse on a givven x, y and button.
-		Button is defined as 0 = left, 1 = middle, 2 = right."""
-		pass
+    def press(self, x, y, button = 0):
+        """Press the mouse on a givven x, y and button.
+        Button is defined as 0 = left, 1 = middle, 2 = right."""
 
-	@abstractmethod
-	def release(self, x, y):
-		"""Release all mouse buttons"""
-		pass
+        print "Function not implemented"
 
-	def click(self, x, y, button = 0):
-		"""Click the mouse on a givven x, y and button.
-		Button is defined as 0 = left, 1 = middle, 2 = right."""
-		self.press(x, y, button)
-		self.release(x, y, button)
+    def release(self, x, y):
+        """Release all mouse buttons"""
 
-	@abstractmethod
-	def move(self, x, y):
-		"""Move the mouse to a givven x and y"""
-		pass
+        print "Function not implemented"
 
-	@abstractmethod
-	def position(self):
-		"""Get the current mouse position in pixels.
-		Returns a tuple of 2 integers"""
-		pass
+    def click(self, x, y, button = 0):
+        """Click the mouse on a givven x, y and button.
+        Button is defined as 0 = left, 1 = middle, 2 = right."""
 
-	@abstractmethod
-	def screen_size(self):
-		"""Get the current screen size in pixels.
-		Returns a tuple of 2 integers"""
-		pass
+        self.press(x, y, button)
+        self.release(x, y, button)
+
+    def move(self, x, y):
+        """Move the mouse to a givven x and y"""
+
+        print "Function not implemented"
+
+    def position(self):
+        """Get the current mouse position in pixels.
+        Returns a tuple of 2 integers"""
+
+        print "Function not implemented"
+
+    def screen_size(self):
+        """Get the current screen size in pixels.
+        Returns a tuple of 2 integers"""
+
+        print "Function not implemented"
 
 if sys.platform == 'darwin':
-	from mac import PyMouse
+    from mac import PyMouse
 
 elif sys.platform == 'win32':
-	from windows import PyMouse
+    from windows import PyMouse
 
 else:
-	from unix import PyMouse
+    from unix import PyMouse
