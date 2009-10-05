@@ -11,7 +11,7 @@ root = display.screen().root
 
 class PyMouse(PyMouseMeta):
 
-    def press(x, y, button = X.Button1):
+    def press(self, x, y, button = X.Button1):
         focus = display.get_input_focus().focus
         rel = focus.translate_coords(root, x, y)
         button_list = [X.Button1, X.Button2, X.Button3]
