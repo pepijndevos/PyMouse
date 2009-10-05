@@ -14,7 +14,7 @@ class PyMouse(PyMouseMeta):
     def press(x, y, button = X.Button1):
         focus = display.get_input_focus().focus
         rel = focus.translate_coords(root, x, y)
-        button_list = [X.Button1, X.Button2 ,X.Button3]
+        button_list = [X.Button1, X.Button2, X.Button3]
 
         try:
             mousePress = event.ButtonPress(
@@ -28,7 +28,7 @@ class PyMouse(PyMouseMeta):
                 event_x=rel.x,
                 event_y=rel.y,
                 state=0,
-                detail=button_list[button+1] #Unix-xlib starts from 1
+                detail=button_list[button]
                 )
             focus.send_event(mousePress)
 
@@ -54,7 +54,7 @@ class PyMouse(PyMouseMeta):
                 event_x=rel.x,
                 event_y=rel.y,
                 state=1,
-                detail=button_list[button+1] #Unix-xlib starts from 1
+                detail=button_list[button]
                 )
             focus.send_event(mouseRealease)
 
@@ -85,4 +85,4 @@ class PyMouse(PyMouseMeta):
     def screen_size(self):
         width = display.screen().width_in_pixels
         height = display.screen().height_in_pixels
-        return (width, height)
+        return width, height
