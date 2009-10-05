@@ -5,7 +5,6 @@ releases = [4, 16, 64]
 
 from ctypes import *
 from win32api import GetSystemMetrics
-
 from pymouse import PyMouseMeta
 
 PUL = POINTER(c_ulong)
@@ -33,6 +32,10 @@ release.mi = MouseInput(0, 0, 0, 4, 0, pointer(extra))
 
 blob = FInputs( (0, click), (0, release) )
 
+class POINT(Structure):
+	_fields_ = [("x", c_ulong),
+				("y", c_ulong)]
+
 class PyMouse(PyMouseMeta):
 	def press(self, x, y, button = 0):
 		windll.user32.SetCursorPos(x, y)
@@ -47,6 +50,12 @@ class PyMouse(PyMouseMeta):
 	def move(self, x, y):
 		windll.user32.SetCursorPos(x, y)
 
+	def position(self):
+		pt = POINT()
+		windll.user32.GetCursorPos(byref(pt))
+		return pt.x, pt.y
+
 	def screen_size(self):
 		width = GetSystemMetrics(0)
 		height = GetSystemMetrics(1)
+		return width, height
