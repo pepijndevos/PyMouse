@@ -18,14 +18,14 @@ m.move(pos[0], pos[1])
 time.sleep(2)
 
 print 'click left'
-m.click(pos[0], pos[1], 0)
-
-time.sleep(2)
-
-print 'click middle'
 m.click(pos[0], pos[1], 1)
 
 time.sleep(2)
 
-print 'click right'
+print 'click middle'
 m.click(pos[0], pos[1], 2)
+
+time.sleep(2)
+
+print 'click right'
+m.click(pos[0], pos[1], 3)
