@@ -1,20 +1,29 @@
 # -*- coding: iso-8859-1 -*-
+
+"""The goal of PyMouse is to have a cross-platform way to control the mouse.
+PyMouse should work on Windows, Mac and any Unix that has xlib.
+
+See http://code.google.com/p/pymouse/ for more information.
+"""
+
+__version__ = "Revision: 30"
+
 import sys
 
 class PyMouseMeta(object):
 
-    def press(self, x, y, button = 0):
+    def press(self, x, y, button = 1):
         """Press the mouse on a givven x, y and button.
         Button is defined as 0 = left, 1 = middle, 2 = right."""
 
         raise NotImplementedError
 
-    def release(self, x, y):
+    def release(self, x, y, button = 1):
         """Release all mouse buttons"""
 
         raise NotImplementedError
 
-    def click(self, x, y, button = 0):
+    def click(self, x, y, button = 1):
         """Click the mouse on a givven x, y and button.
         Button is defined as 0 = left, 1 = middle, 2 = right."""
 
