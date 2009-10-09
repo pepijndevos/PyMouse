@@ -38,12 +38,12 @@ class POINT(Structure):
 
 class PyMouse(PyMouseMeta):
     def press(self, x, y, button = 1):
-        windll.user32.SetCursorPos(x, y)
+        self.move(x, y)
         blob[0].ii.mi.dwFlags = clicks[button]
         windll.user32.SendInput(2,pointer(blob),sizeof(blob[0]))
 
     def release(self, x, y, button = 1):
-        windll.user32.SetCursorPos(x, y)
+        self.move(x, y)
         blob[1].ii.mi.dwFlags = releases[button]
         windll.user32.SendInput(2,pointer(blob),sizeof(blob[0]))
 

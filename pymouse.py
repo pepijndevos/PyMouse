@@ -6,7 +6,7 @@ PyMouse should work on Windows, Mac and any Unix that has xlib.
 See http://code.google.com/p/pymouse/ for more information.
 """
 
-__version__ = "Revision: 30"
+__version__ = "Revision: 33"
 
 import sys
 
@@ -14,18 +14,19 @@ class PyMouseMeta(object):
 
     def press(self, x, y, button = 1):
         """Press the mouse on a givven x, y and button.
-        Button is defined as 0 = left, 1 = middle, 2 = right."""
+        Button is defined as 1 = left, 2 = right, 3 = middle."""
 
         raise NotImplementedError
 
     def release(self, x, y, button = 1):
-        """Release all mouse buttons"""
+        """Release the mouse on a givven x, y and button.
+        Button is defined as 1 = left, 2 = right, 3 = middle."""
 
         raise NotImplementedError
 
     def click(self, x, y, button = 1):
         """Click the mouse on a givven x, y and button.
-        Button is defined as 0 = left, 1 = middle, 2 = right."""
+        Button is defined as 1 = left, 2 = right, 3 = middle."""
 
         self.press(x, y, button)
         self.release(x, y, button)
@@ -47,7 +48,10 @@ class PyMouseMeta(object):
 
         raise NotImplementedError
 
-if sys.platform == 'darwin':
+if sys.platform.startswith('java'):
+    from java_ import PyMouse
+
+elif sys.platform == 'darwin':
     from mac import PyMouse
 
 elif sys.platform == 'win32':

@@ -14,7 +14,7 @@ class PyMouse(PyMouseMeta):
     def press(self, x, y, button = 1):
         focus = display.get_input_focus().focus
         rel = focus.translate_coords(root, x, y)
-        button_list = [None, X.Button1, X.Button2, X.Button3]
+        button_list = [None, X.Button1, X.Button3, X.Button2]
 
         try:
             mousePress = event.ButtonPress(
@@ -40,7 +40,7 @@ class PyMouse(PyMouseMeta):
     def release(self, x, y, button = 1):
         focus = display.get_input_focus().focus
         rel = focus.translate_coords(root, x, y)
-        button_list = [None, X.Button1, X.Button2, X.Button3]
+        button_list = [None, X.Button1, X.Button3, X.Button2]
 
         try:
             mouseRealease = event.ButtonRelease(
@@ -69,7 +69,7 @@ class PyMouse(PyMouseMeta):
             self.release(x, y, button)
         except:
             # Using xlib-xtest fake input
-            root.warp_pointer(x, y) # I believe you where not setting the position
+            self.move(x, y) # I believe you where not setting the position
             Xlib.ext.xtest.fake_input (display, X.ButtonPress, button+1) #Unix-xlib starts from 1
 
         display.sync()
