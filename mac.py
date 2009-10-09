@@ -5,8 +5,9 @@ from pymouse import PyMouseMeta
 
 class PyMouse(PyMouseMeta):
     def press(self, x, y, button = 1):
-        button_list = [None, [1, 0, 0], [0, 1, 0], [0, 0, 1]]
-        CGPostMouseEvent((x, y), 1, 3, *button_list[button])
+        button_list = [0, 0, 0]
+        button_list[button - 1] = 1
+        CGPostMouseEvent((x, y), 1, 3, *button_list)
 
     def release(self, x, y, button = 1):
         CGPostMouseEvent((x, y), 1, 3, 0, 0, 0)

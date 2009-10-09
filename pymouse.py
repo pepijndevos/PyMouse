@@ -6,8 +6,6 @@ PyMouse should work on Windows, Mac and any Unix that has xlib.
 See http://code.google.com/p/pymouse/ for more information.
 """
 
-__version__ = "Revision: 33"
-
 import sys
 
 class PyMouseMeta(object):
