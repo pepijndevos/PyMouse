@@ -1,81 +1,26 @@
 # -*- coding: iso-8859-1 -*-
 from Xlib.display import Display
 from Xlib import X
-from Xlib.protocol import event
-import Xlib.ext.xtest
+from Xlib.ext.xtest import fake_input
 
 from pymouse import PyMouseMeta
 
-display = Display(":0")
-root = display.screen().root
+display = Display()
 
 class PyMouse(PyMouseMeta):
 
     def press(self, x, y, button = 1):
-        focus = display.get_input_focus().focus
-        rel = focus.translate_coords(root, x, y)
-        button_list = [None, X.Button1, X.Button3, X.Button2]
-
-        try:
-            mousePress = event.ButtonPress(
-                time=X.CurrentTime,
-                root=root,
-                window=focus,
-                same_screen=1,
-                child=X.NONE,
-                root_x=x,
-                root_y=y,
-                event_x=rel.x,
-                event_y=rel.y,
-                state=0,
-                detail=button_list[button]
-                )
-            focus.send_event(mousePress)
-
-        except:
-            pass
-
+    	self.move(x, y)
+	fake_input(display, X.ButtonPress, [None, 1, 3, 2][button])
         display.sync()
 
     def release(self, x, y, button = 1):
-        focus = display.get_input_focus().focus
-        rel = focus.translate_coords(root, x, y)
-        button_list = [None, X.Button1, X.Button3, X.Button2]
-
-        try:
-            mouseRealease = event.ButtonRelease(
-                time=X.CurrentTime,
-                root=root,
-                window=focus,
-                same_screen=1,
-                child=X.NONE,
-                root_x=x,
-                root_y=y,
-                event_x=rel.x,
-                event_y=rel.y,
-                state=1,
-                detail=button_list[button]
-                )
-            focus.send_event(mouseRealease)
-
-        except:
-            pass
-
-        display.sync()
-
-    def click(self, x, y, button = 1):
-        try:
-            self.press(x, y, button)
-            self.release(x, y, button)
-        except:
-            # Using xlib-xtest fake input
-            self.move(x, y) # I believe you where not setting the position
-            Xlib.ext.xtest.fake_input (display, X.ButtonPress, button+1) #Unix-xlib starts from 1
-
+    	self.move(x, y)
+	fake_input(display, X.ButtonRelease, [None, 1, 3, 2][button])
         display.sync()
 
     def move(self, x, y):
-        root.warp_pointer(x, y)
+	fake_input(display, X.MotionNotify, x=x, y=y)
         display.sync()
 
     def position(self):
