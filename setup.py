@@ -5,6 +5,6 @@ setup(name='PyMouse',
       description='Cross-platform mouse control',
       author='Pepijn de Vos',
       author_email='pepijndevos@gmail.com',
-      url='http://code.google.com/p/pymouse',
+      url='http://github.com/pepijndevos/PyMouse',
       packages=['.'],
      )
