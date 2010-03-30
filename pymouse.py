@@ -46,11 +46,24 @@ class PyMouseMeta(object):
 
         raise NotImplementedError
 
-    def register_callback(self, callback, type='all'):
-        """Register a callback function for events of the specified type.
-        Callback should be a function accepting a dict containing the event."""
-        
+class PyMouseEventMeta(object):
+
+    def __init__(self):
+        """Initiate the event system to start listening for mouse events"""
+
         raise NotImplementedError
+
+    def click(self, x, y, state=(0, 0, 0)):
+        """Subclass this method with your click event handler"""
+
+        pass
+
+    def move(self, x, y):
+        """Subclass this method with your move event handler"""
+
+        pass
+
+
 
 if sys.platform.startswith('java'):
     from java_ import PyMouse
