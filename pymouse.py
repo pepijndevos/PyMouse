@@ -46,6 +46,12 @@ class PyMouseMeta(object):
 
         raise NotImplementedError
 
+    def register_callback(self, callback, type='all'):
+        """Register a callback function for events of the specified type.
+        Callback should be a function accepting a dict containing the event."""
+        
+        raise NotImplementedError
+
 if sys.platform.startswith('java'):
     from java_ import PyMouse
 
