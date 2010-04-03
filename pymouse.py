@@ -7,6 +7,7 @@ See http://github.com/pepijndevos/PyMouse for more information.
 """
 
 import sys
+from threading import Thread
 
 class PyMouseMeta(object):
 
@@ -28,7 +29,7 @@ class PyMouseMeta(object):
 
         self.press(x, y, button)
         self.release(x, y, button)
-
+ 
     def move(self, x, y):
         """Move the mouse to a givven x and y"""
 
@@ -46,12 +47,9 @@ class PyMouseMeta(object):
 
         raise NotImplementedError
 
-class PyMouseEventMeta(object):
-
-    def __init__(self):
-        """Initiate the event system to start listening for mouse events"""
-
-        raise NotImplementedError
+class PyMouseEventMeta(Thread):
+    
+    deamon = True
 
     def click(self, x, y, state=(0, 0, 0)):
         """Subclass this method with your click event handler"""
@@ -72,7 +70,7 @@ elif sys.platform == 'darwin':
     from mac import PyMouse
 
 elif sys.platform == 'win32':
-    from windows import PyMouse
+    from windows import PyMouse, PyMouseEvent
 
 else:
     from unix import PyMouse

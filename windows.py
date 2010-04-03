@@ -5,7 +5,9 @@ releases = [None, 4, 16, 64]
 
 from ctypes import *
 from win32api import GetSystemMetrics
-from pymouse import PyMouseMeta
+from pymouse import PyMouseMeta, PyMouseEventMeta
+import pythoncom, pyHook
+from threading import Thread
 
 PUL = POINTER(c_ulong)
 class MouseInput(Structure):
@@ -59,3 +61,26 @@ class PyMouse(PyMouseMeta):
         width = GetSystemMetrics(0)
         height = GetSystemMetrics(1)
         return width, height
+
+class PyMouseEvent(PyMouseEventMeta):
+    def run(self):
+        hm = pyHook.HookManager()
+        hm.MouseAllButtons = self._click
+        hm.HookMouse()
+        pythoncom.PumpMessages()
+
+    def _click(self, event):
+        print "click!"
+        if event.Message == 513:
+            self.click(event.Position[0], event.Position[1], 1, True)
+        elif event.Message == 514:
+            self.click(event.Position[0], event.Position[1], 1, False)
+        elif event.Message == 516:
+            self.click(event.Position[0], event.Position[1], 2, True)
+        elif event.Message == 517:
+            self.click(event.Position[0], event.Position[1], 2, False)
+        elif event.Message == 519:
+            self.click(event.Position[0], event.Position[1], 3, True)
+        elif event.Message == 520:
+            self.click(event.Position[0], event.Position[1], 3, False)
+        return True
