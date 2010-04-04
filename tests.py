@@ -43,3 +43,8 @@ m.click(pos[0], pos[1], 2)
 time.sleep(2)
 
 m.click(pos[0], pos[1], 3)
+
+try:
+    e.stop()
+except:
+    pass

@@ -51,8 +51,12 @@ class PyMouseEventMeta(Thread):
     
     deamon = True
     capture = False
+    state = True
 
-    def click(self, x, y, state=(0, 0, 0)):
+    def stop(self):
+        self.state = False
+
+    def click(self, x, y, button, press):
         """Subclass this method with your click event handler"""
 
         pass

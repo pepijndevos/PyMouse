@@ -63,19 +63,13 @@ class PyMouse(PyMouseMeta):
         return width, height
 
 class PyMouseEvent(PyMouseEventMeta):
-    def __init__(self):
-        self.listen = True
-
-    def __del__(self):
-        self.listen = False
-
     def run(self):
         hm = pyHook.HookManager()
         hm.MouseAllButtons = self._click
         hm.MouseMove = self._move
         hm.HookMouse()
 
-        while self.listen
+        while self.state:
             sleep(0.1)
             pythoncom.PumpWaitingMessages()
 
