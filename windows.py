@@ -70,7 +70,6 @@ class PyMouseEvent(PyMouseEventMeta):
         pythoncom.PumpMessages()
 
     def _click(self, event):
-        print "click!"
         if event.Message == 513:
             self.click(event.Position[0], event.Position[1], 1, True)
         elif event.Message == 514:
