@@ -22,7 +22,7 @@ class PyMouse(PyMouseMeta):
 
     def position(self):
         loc = NSEvent.mouseLocation()
-        return loc.x, CGDisplayPixelsHigh(0) - loc.y
+        return int(loc.x), int(CGDisplayPixelsHigh(0) - loc.y)
 
     def screen_size(self):
         return CGDisplayPixelsWide(0), CGDisplayPixelsHigh(0)
