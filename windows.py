@@ -70,7 +70,7 @@ class PyMouseEvent(PyMouseEventMeta):
         hm.HookMouse()
 
         while self.state:
-            sleep(0.1)
+            sleep(0.01)
             pythoncom.PumpWaitingMessages()
 
     def _click(self, event):
