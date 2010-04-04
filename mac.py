@@ -49,7 +49,7 @@ class PyMouseEvent(PyMouseEventMeta):
         CGEventTapEnable(tap, True)
 
         while self.state:
-            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 5, True)
+            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 5, False)
 
     def handler(self, proxy, type, event, refcon):
         (x, y) = CGEventGetLocation(event)
@@ -60,5 +60,7 @@ class PyMouseEvent(PyMouseEventMeta):
         else:
             self.move(x, y)
         
-        if not self.capture:
-            return event
+        if self.capture:
+            CGEventSetType(event, kCGEventNull)
+
+        return event
