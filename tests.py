@@ -1,5 +1,23 @@
 from pymouse import PyMouse
 import random, time
+try:
+    from pymouse import PyMouseEvent
+
+    class event(PyMouseEvent):
+        def move(self, x, y):
+            print "Mouse moved to", x, y
+
+        def click(self, x, y, button, press):
+            if press:
+                print "Mouse pressed at", x, y, "with button", button
+            else:
+                print "Mouse released at", x, y, "with button", button
+
+    e = event()
+    e.start()
+
+except ImportError:
+    print "Mouse events are not yet supported on your platform"
 
 m = PyMouse()
 try:
@@ -12,20 +30,16 @@ except:
 
 print "Position: %s" % (str(pos))
 
-print 'move'
 m.move(pos[0], pos[1])
 
 time.sleep(2)
 
-print 'click left'
 m.click(pos[0], pos[1], 1)
 
 time.sleep(2)
 
-print 'click right'
 m.click(pos[0], pos[1], 2)
 
 time.sleep(2)
 
-print 'click middle'
 m.click(pos[0], pos[1], 3)
