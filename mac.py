@@ -8,15 +8,15 @@ releaseID = [None, kCGEventLeftMouseUp, kCGEventRightMouseUp, kCGEventOtherMouse
 
 class PyMouse(PyMouseMeta):
     def press(self, x, y, button = 1):
-        event = CGEventCreateMouseEvent(None, pressID[button], CGPoint(x, y), button - 1)
+        event = CGEventCreateMouseEvent(None, pressID[button], (x, y), button - 1)
         CGEventPost(kCGHIDEventTap, event)
 
     def release(self, x, y, button = 1):
-        event = CGEventCreateMouseEvent(None, releaseID[button], CGPoint(x, y), button - 1)
+        event = CGEventCreateMouseEvent(None, releaseID[button], (x, y), button - 1)
         CGEventPost(kCGHIDEventTap, event)
 
     def move(self, x, y):
-        move = CGEventCreateMouseEvent(None, kCGEventMouseMoved, CGPoint(x, y), 0)
+        move = CGEventCreateMouseEvent(None, kCGEventMouseMoved, (x, y), 0)
         CGEventPost(kCGHIDEventTap, move)
         
 
@@ -49,7 +49,7 @@ class PyMouseEvent(PyMouseEventMeta):
         CGEventTapEnable(tap, True)
 
         while self.state:
-            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 5, False)
+            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 5, True)
 
     def handler(self, proxy, type, event, refcon):
         (x, y) = CGEventGetLocation(event)
@@ -59,5 +59,6 @@ class PyMouseEvent(PyMouseEventMeta):
             self.click(x, y, releaseID.index(type), False)
         else:
             self.move(x, y)
-
-        return event
+        
+        if not self.capture:
+            return event
