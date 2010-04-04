@@ -56,7 +56,7 @@ class PyMouseEvent(PyMouseEventMeta):
         if type in pressID:
             self.click(x, y, pressID.index(type), True)
         elif type in releaseID:
-            self.click(x, y, releaseID.index(type), True)
+            self.click(x, y, releaseID.index(type), False)
         else:
             self.move(x, y)
 
