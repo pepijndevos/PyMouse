@@ -7,6 +7,7 @@ from ctypes import *
 from win32api import GetSystemMetrics
 from pymouse import PyMouseMeta, PyMouseEventMeta
 import pythoncom, pyHook
+from time import sleep
 
 PUL = POINTER(c_ulong)
 class MouseInput(Structure):
@@ -62,12 +63,21 @@ class PyMouse(PyMouseMeta):
         return width, height
 
 class PyMouseEvent(PyMouseEventMeta):
+    def __init__(self):
+        self.listen = True
+
+    def __del__(self):
+        self.listen = False
+
     def run(self):
         hm = pyHook.HookManager()
         hm.MouseAllButtons = self._click
         hm.MouseMove = self._move
         hm.HookMouse()
-        pythoncom.PumpMessages()
+
+        while self.listen
+            sleep(0.1)
+            pythoncom.PumpWaitingMessages()
 
     def _click(self, event):
         x,y = event.Position
