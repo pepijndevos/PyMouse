@@ -7,7 +7,7 @@ from ctypes import *
 from win32api import GetSystemMetrics
 from pymouse import PyMouseMeta, PyMouseEventMeta
 import pythoncom, pyHook
-from threading import Thread
+from pyHook.HookConstants import *
 
 PUL = POINTER(c_ulong)
 class MouseInput(Structure):
@@ -66,20 +66,28 @@ class PyMouseEvent(PyMouseEventMeta):
     def run(self):
         hm = pyHook.HookManager()
         hm.MouseAllButtons = self._click
+        hm.MouseMove = self._move
         hm.HookMouse()
         pythoncom.PumpMessages()
 
     def _click(self, event):
-        if event.Message == 513:
-            self.click(event.Position[0], event.Position[1], 1, True)
-        elif event.Message == 514:
-            self.click(event.Position[0], event.Position[1], 1, False)
-        elif event.Message == 516:
-            self.click(event.Position[0], event.Position[1], 2, True)
-        elif event.Message == 517:
-            self.click(event.Position[0], event.Position[1], 2, False)
-        elif event.Message == 519:
-            self.click(event.Position[0], event.Position[1], 3, True)
-        elif event.Message == 520:
-            self.click(event.Position[0], event.Position[1], 3, False)
-        return True
+        x,y = event.Position
+
+        if event.Message == WM_LBUTTONDOWN:
+            self.click(x, y, 1, True)
+        elif event.Message == WM_LBUTTONUP:
+            self.click(x, y, 1, False)
+        elif event.Message == WM_RBUTTONDOWN:
+            self.click(x, y, 2, True)
+        elif event.Message == WM_RBUTTONUP:
+            self.click(x, y, 2, False)
+        elif event.Message == WM_MBUTTONDOWN:
+            self.click(x, y, 3, True)
+        elif event.Message == WM_MBUTTONUP:
+            self.click(x, y, 3, False)
+        return not self.capture
+
+    def _move(self, event):
+        x,y = event.Position
+        self.click(x, y)
+        return not self.capture
