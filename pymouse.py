@@ -50,6 +50,7 @@ class PyMouseMeta(object):
 class PyMouseEventMeta(Thread):
     
     deamon = True
+    capture = False
 
     def click(self, x, y, state=(0, 0, 0)):
         """Subclass this method with your click event handler"""
