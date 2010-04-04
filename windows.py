@@ -7,7 +7,6 @@ from ctypes import *
 from win32api import GetSystemMetrics
 from pymouse import PyMouseMeta, PyMouseEventMeta
 import pythoncom, pyHook
-from pyHook.HookConstants import *
 
 PUL = POINTER(c_ulong)
 class MouseInput(Structure):
@@ -73,21 +72,21 @@ class PyMouseEvent(PyMouseEventMeta):
     def _click(self, event):
         x,y = event.Position
 
-        if event.Message == WM_LBUTTONDOWN:
+        if event.Message == pyHook.HookConstants.WM_LBUTTONDOWN:
             self.click(x, y, 1, True)
-        elif event.Message == WM_LBUTTONUP:
+        elif event.Message == pyHook.HookConstants.WM_LBUTTONUP:
             self.click(x, y, 1, False)
-        elif event.Message == WM_RBUTTONDOWN:
+        elif event.Message == pyHook.HookConstants.WM_RBUTTONDOWN:
             self.click(x, y, 2, True)
-        elif event.Message == WM_RBUTTONUP:
+        elif event.Message == pyHook.HookConstants.WM_RBUTTONUP:
             self.click(x, y, 2, False)
-        elif event.Message == WM_MBUTTONDOWN:
+        elif event.Message == pyHook.HookConstants.WM_MBUTTONDOWN:
             self.click(x, y, 3, True)
-        elif event.Message == WM_MBUTTONUP:
+        elif event.Message == pyHook.HookConstants.WM_MBUTTONUP:
             self.click(x, y, 3, False)
         return not self.capture
 
     def _move(self, event):
         x,y = event.Position
-        self.click(x, y)
+        self.move(x, y)
         return not self.capture
