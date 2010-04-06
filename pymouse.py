@@ -78,4 +78,4 @@ elif sys.platform == 'win32':
     from windows import PyMouse, PyMouseEvent
 
 else:
-    from unix import PyMouse
+    from unix import PyMouse, PyMouseEvent

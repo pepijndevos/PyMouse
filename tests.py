@@ -14,7 +14,7 @@ try:
                 print "Mouse released at", x, y, "with button", button
 
     e = event()
-    e.capture = True
+    #e.capture = True
     e.start()
 
 except ImportError:
