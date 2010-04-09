@@ -8,21 +8,22 @@ from Xlib.protocol import rq
 from pymouse import PyMouseMeta, PyMouseEventMeta
 
 display = Display(':0')
+display2 = Display(':0')
 
 class PyMouse(PyMouseMeta):
 
     def press(self, x, y, button = 1):
     	self.move(x, y)
-	fake_input(display, X.ButtonPress, [None, 1, 3, 2][button])
+        fake_input(display, X.ButtonPress, [None, 1, 3, 2][button])
         display.sync()
 
     def release(self, x, y, button = 1):
     	self.move(x, y)
-	fake_input(display, X.ButtonRelease, [None, 1, 3, 2][button])
+        fake_input(display, X.ButtonRelease, [None, 1, 3, 2][button])
         display.sync()
 
     def move(self, x, y):
-	fake_input(display, X.MotionNotify, x=x, y=y)
+        fake_input(display, X.MotionNotify, x=x, y=y)
         display.sync()
 
     def position(self):
@@ -35,7 +36,7 @@ class PyMouse(PyMouseMeta):
         return width, height
 
 class PyMouseEvent(PyMouseEventMeta):
-    ctx = display.record_create_context(
+    ctx = display2.record_create_context(
         0,
         [record.AllClients],
         [{
@@ -52,23 +53,15 @@ class PyMouseEvent(PyMouseEventMeta):
 
     def run(self):
         if self.capture:
-            display.screen().root.grab_pointer(True, X.ButtonPressMask | X.ButtonReleaseMask | X.MotionNotify, X.GrabModeAsync, X.GrabModeAsync, 0, 0, X.CurrentTime)
+            display2.screen().root.grab_pointer(True, X.ButtonPressMask | X.ButtonReleaseMask | X.MotionNotify, X.GrabModeAsync, X.GrabModeAsync, 0, 0, X.CurrentTime)
 
-        display.record_enable_context(self.ctx, self.handler)
-        display.record_free_context(self.ctx)
+        display2.record_enable_context(self.ctx, self.handler)
+        display2.record_free_context(self.ctx)
     
     def stop(self):
-        # This stuff should tear things down, but it does not work.
         display.record_disable_context(self.ctx)
         display.ungrab_pointer(X.CurrentTime)
         display.flush()
-
-        # That is why I simply set the handler functions to empty ones
-        def empty(*args):
-            pass
-
-        self.click = empty
-        self.move = empty
 
     def handler(self, reply):
         data = reply.data
