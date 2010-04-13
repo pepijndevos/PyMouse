@@ -17,7 +17,7 @@
 from distutils.core import setup
 
 setup(name='PyMouse',
-      version='0.4',
+      version='1.0',
       description='Cross-platform mouse control',
       author='Pepijn de Vos',
       author_email='pepijndevos@gmail.com',
