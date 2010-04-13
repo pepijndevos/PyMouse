@@ -22,5 +22,5 @@ setup(name='PyMouse',
       author='Pepijn de Vos',
       author_email='pepijndevos@gmail.com',
       url='http://github.com/pepijndevos/PyMouse',
-      packages=['.'],
+      packages = ["pymouse"]
      )
