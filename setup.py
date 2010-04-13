@@ -22,5 +22,15 @@ setup(name='PyMouse',
       author='Pepijn de Vos',
       author_email='pepijndevos@gmail.com',
       url='http://github.com/pepijndevos/PyMouse',
-      packages = ["pymouse"]
+      packages = ["pymouse"],
+      classifiers = [
+          "Programming Language :: Python",
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "License :: OSI Approved :: Apache Software License",
+          "Operating System :: MacOS :: MacOS X",
+          "Operating System :: Microsoft :: Windows",
+          "Operating System :: Unix",
+          "Topic :: Software Development :: Libraries :: Python Modules"
+      ]
      )
