@@ -22,8 +22,8 @@ from Xlib.protocol import rq
 
 from pymouse import PyMouseMeta, PyMouseEventMeta
 
-display = Display(':0')
-display2 = Display(':0')
+display = Display()
+display2 = Display()
 
 class PyMouse(PyMouseMeta):
 
