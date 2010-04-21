@@ -68,7 +68,7 @@ class PyMouseEvent(PyMouseEventMeta):
 
     def run(self):
         if self.capture:
-            display2.screen().root.grab_pointer(True, X.ButtonPressMask | X.ButtonReleaseMask | X.MotionNotify, X.GrabModeAsync, X.GrabModeAsync, 0, 0, X.CurrentTime)
+            display2.screen().root.grab_pointer(True, X.ButtonPressMask | X.ButtonReleaseMask | X.PointerMotionMask, X.GrabModeAsync, X.GrabModeAsync, 0, 0, X.CurrentTime)
 
         display2.record_enable_context(self.ctx, self.handler)
         display2.record_free_context(self.ctx)
