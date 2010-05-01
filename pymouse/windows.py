@@ -19,7 +19,7 @@ releases = [None, 4, 16, 64]
 
 from ctypes import *
 from win32api import GetSystemMetrics
-from pymouse import PyMouseMeta, PyMouseEventMeta
+from base import PyMouseMeta, PyMouseEventMeta
 import pythoncom, pyHook
 from time import sleep
 

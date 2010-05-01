@@ -20,7 +20,7 @@ from Xlib.ext.xtest import fake_input
 from Xlib.ext import record
 from Xlib.protocol import rq
 
-from pymouse import PyMouseMeta, PyMouseEventMeta
+from base import PyMouseMeta, PyMouseEventMeta
 
 display = Display()
 display2 = Display()

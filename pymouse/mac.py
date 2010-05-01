@@ -16,7 +16,7 @@
 
 from Quartz import *
 from AppKit import NSEvent
-from pymouse import PyMouseMeta, PyMouseEventMeta
+from base import PyMouseMeta, PyMouseEventMeta
 
 pressID = [None, kCGEventLeftMouseDown, kCGEventRightMouseDown, kCGEventOtherMouseDown]
 releaseID = [None, kCGEventLeftMouseUp, kCGEventRightMouseUp, kCGEventOtherMouseUp]
