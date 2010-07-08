@@ -51,24 +51,26 @@ class PyMouse(PyMouseMeta):
         return width, height
 
 class PyMouseEvent(PyMouseEventMeta):
-    ctx = display2.record_create_context(
-        0,
-        [record.AllClients],
-        [{
-                'core_requests': (0, 0),
-                'core_replies': (0, 0),
-                'ext_requests': (0, 0, 0, 0),
-                'ext_replies': (0, 0, 0, 0),
-                'delivered_events': (0, 0),
-                'device_events': (X.ButtonPressMask, X.ButtonReleaseMask),
-                'errors': (0, 0),
-                'client_started': False,
-                'client_died': False,
-        }])
+    def __init__(self):
+        PyMouseEventMeta.__init__(self)
+        self.ctx = display2.record_create_context(
+            0,
+            [record.AllClients],
+            [{
+                    'core_requests': (0, 0),
+                    'core_replies': (0, 0),
+                    'ext_requests': (0, 0, 0, 0),
+                    'ext_replies': (0, 0, 0, 0),
+                    'delivered_events': (0, 0),
+                    'device_events': (X.ButtonPressMask, X.ButtonReleaseMask),
+                    'errors': (0, 0),
+                    'client_started': False,
+                    'client_died': False,
+            }])
 
     def run(self):
         if self.capture:
-            display2.screen().root.grab_pointer(True, X.ButtonPressMask | X.ButtonReleaseMask | X.PointerMotionMask, X.GrabModeAsync, X.GrabModeAsync, 0, 0, X.CurrentTime)
+            display2.screen().root.grab_pointer(True, X.ButtonPressMask | X.ButtonReleaseMask, X.GrabModeAsync, X.GrabModeAsync, 0, 0, X.CurrentTime)
 
         display2.record_enable_context(self.ctx, self.handler)
         display2.record_free_context(self.ctx)
@@ -77,6 +79,9 @@ class PyMouseEvent(PyMouseEventMeta):
         display.record_disable_context(self.ctx)
         display.ungrab_pointer(X.CurrentTime)
         display.flush()
+        display2.record_disable_context(self.ctx)
+        display2.ungrab_pointer(X.CurrentTime)
+        display2.flush()
 
     def handler(self, reply):
         data = reply.data
