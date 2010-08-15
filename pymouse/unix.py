@@ -29,12 +29,12 @@ class PyMouse(PyMouseMeta):
 
     def press(self, x, y, button = 1):
     	self.move(x, y)
-        fake_input(display, X.ButtonPress, [None, 1, 3, 2][button])
+        fake_input(display, X.ButtonPress, [None, 1, 3, 2, 4, 5][button])
         display.sync()
 
     def release(self, x, y, button = 1):
     	self.move(x, y)
-        fake_input(display, X.ButtonRelease, [None, 1, 3, 2][button])
+        fake_input(display, X.ButtonRelease, [None, 1, 3, 2, 4, 5][button])
         display.sync()
 
     def move(self, x, y):
