@@ -22,38 +22,39 @@ from Xlib.protocol import rq
 
 from base import PyMouseMeta, PyMouseEventMeta
 
-display = Display()
-display2 = Display()
 
 class PyMouse(PyMouseMeta):
+    def __init__(self):
+        self.display = Display()
+        self.display2 = Display()
 
     def press(self, x, y, button = 1):
-    	self.move(x, y)
-        fake_input(display, X.ButtonPress, [None, 1, 3, 2, 4, 5][button])
-        display.sync()
+        self.move(x, y)
+        fake_input(self.display, X.ButtonPress, [None, 1, 3, 2, 4, 5][button])
+        self.display.sync()
 
     def release(self, x, y, button = 1):
-    	self.move(x, y)
-        fake_input(display, X.ButtonRelease, [None, 1, 3, 2, 4, 5][button])
-        display.sync()
+        self.move(x, y)
+        fake_input(self.display, X.ButtonRelease, [None, 1, 3, 2, 4, 5][button])
+        self.display.sync()
 
     def move(self, x, y):
-        fake_input(display, X.MotionNotify, x=x, y=y)
-        display.sync()
+        fake_input(self.display, X.MotionNotify, x=x, y=y)
+        self.display.sync()
 
     def position(self):
-        coord = display.screen().root.query_pointer()._data
+        coord = self.display.screen().root.query_pointer()._data
         return coord["root_x"], coord["root_y"]
 
     def screen_size(self):
-        width = display.screen().width_in_pixels
-        height = display.screen().height_in_pixels
+        width = self.display.screen().width_in_pixels
+        height = self.display.screen().height_in_pixels
         return width, height
 
 class PyMouseEvent(PyMouseEventMeta):
     def __init__(self):
         PyMouseEventMeta.__init__(self)
-        self.ctx = display2.record_create_context(
+        self.ctx = self.display2.record_create_context(
             0,
             [record.AllClients],
             [{
@@ -70,29 +71,29 @@ class PyMouseEvent(PyMouseEventMeta):
 
     def run(self):
         if self.capture:
-            display2.screen().root.grab_pointer(True, X.ButtonPressMask | X.ButtonReleaseMask, X.GrabModeAsync, X.GrabModeAsync, 0, 0, X.CurrentTime)
+            self.display2.screen().root.grab_pointer(True, X.ButtonPressMask | X.ButtonReleaseMask, X.GrabModeAsync, X.GrabModeAsync, 0, 0, X.CurrentTime)
 
-        display2.record_enable_context(self.ctx, self.handler)
-        display2.record_free_context(self.ctx)
-    
+        self.display2.record_enable_context(self.ctx, self.handler)
+        self.display2.record_free_context(self.ctx)
+
     def stop(self):
-        display.record_disable_context(self.ctx)
-        display.ungrab_pointer(X.CurrentTime)
-        display.flush()
-        display2.record_disable_context(self.ctx)
-        display2.ungrab_pointer(X.CurrentTime)
-        display2.flush()
+        self.display.record_disable_context(self.ctx)
+        self.display.ungrab_pointer(X.CurrentTime)
+        self.display.flush()
+        self.display2.record_disable_context(self.ctx)
+        self.display2.ungrab_pointer(X.CurrentTime)
+        self.display2.flush()
 
     def handler(self, reply):
         data = reply.data
         while len(data):
-            event, data = rq.EventField(None).parse_binary_value(data, display.display, None, None)
-            
+            event, data = rq.EventField(None).parse_binary_value(data, self.display.display, None, None)
+
             if event.type == X.ButtonPress:
                 self.click(event.root_x, event.root_y, (None, 1, 3, 2, 3, 3, 3)[event.detail], True)
             elif event.type == X.ButtonRelease:
                 self.click(event.root_x, event.root_y, (None, 1, 3, 2, 3, 3, 3)[event.detail], False)
             else:
                 self.move(event.root_x, event.root_y)
-            
+
 
