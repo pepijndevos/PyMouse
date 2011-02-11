@@ -113,4 +113,4 @@ class PyMouseEvent(PyMouseEventMeta):
     def _move(self, event):
         x,y = event.Position
         self.move(x, y)
-        return not self.capture
+        return not self.captureMove
