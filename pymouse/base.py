@@ -62,7 +62,7 @@ class PyMouseMeta(object):
 
 class PyMouseEventMeta(Thread):
     
-    def __init__(self, capture=False, captureMove):
+    def __init__(self, capture=False, captureMove=False):
         Thread.__init__(self)
         self.daemon = True
         self.capture = capture
