@@ -54,10 +54,11 @@ class PyMouseEvent(PyMouseEventMeta):
     def __init__(self):
         PyMouseEventMeta.__init__(self)
         self.hm = pyHook.HookManager()
-    def run(self):
-        hm.MouseAllButtons = self._click
-        hm.MouseMove = self._move
-        hm.HookMouse()
+
+def run(self):
+        self.hm.MouseAllButtons = self._click
+        self.hm.MouseMove = self._move
+        self.hm.HookMouse()
         while self.state:
             sleep(0.01)
             pythoncom.PumpWaitingMessages()
