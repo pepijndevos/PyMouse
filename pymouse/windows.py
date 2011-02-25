@@ -15,7 +15,7 @@
 #   limitations under the License.
 
 from ctypes import *
-from win32api import GetSystemMetrics
+import win32api,win32con
 from base import PyMouseMeta, PyMouseEventMeta
 import pythoncom, pyHook
 from time import sleep
