@@ -55,7 +55,7 @@ class PyMouseEvent(PyMouseEventMeta):
         PyMouseEventMeta.__init__(self)
         self.hm = pyHook.HookManager()
 
-def run(self):
+    def run(self):
         self.hm.MouseAllButtons = self._click
         self.hm.MouseMove = self._move
         self.hm.HookMouse()
