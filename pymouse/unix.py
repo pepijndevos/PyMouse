@@ -25,6 +25,7 @@ from base import PyMouseMeta, PyMouseEventMeta
 
 class PyMouse(PyMouseMeta):
     def __init__(self):
+        PyMouseMeta.__init__(self)
         self.display = Display()
         self.display2 = Display()
 
@@ -54,6 +55,8 @@ class PyMouse(PyMouseMeta):
 class PyMouseEvent(PyMouseEventMeta):
     def __init__(self):
         PyMouseEventMeta.__init__(self)
+        self.display = Display()
+        self.display2 = Display()
         self.ctx = self.display2.record_create_context(
             0,
             [record.AllClients],
