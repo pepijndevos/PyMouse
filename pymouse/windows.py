@@ -14,54 +14,28 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-clicks = [None, 2, 8, 32]
-releases = [None, 4, 16, 64]
-
 from ctypes import *
 from win32api import GetSystemMetrics
 from base import PyMouseMeta, PyMouseEventMeta
 import pythoncom, pyHook
 from time import sleep
 
-PUL = POINTER(c_ulong)
-class MouseInput(Structure):
-    _fields_ = [("dx", c_long),
-             ("dy", c_long),
-             ("mouseData", c_ulong),
-             ("dwFlags", c_ulong),
-             ("time",c_ulong),
-             ("dwExtraInfo", PUL)]
-
-class Input_I(Union):
-    _fields_ = [("mi", MouseInput)]
-
-class Input(Structure):
-    _fields_ = [("type", c_ulong), ("ii", Input_I)]
-
-FInputs = Input * 2
-extra = c_ulong(0)
-
-click = Input_I()
-click.mi = MouseInput(0, 0, 0, 2, 0, pointer(extra))
-release = Input_I()
-release.mi = MouseInput(0, 0, 0, 4, 0, pointer(extra))
-
-blob = FInputs( (0, click), (0, release) )
-
 class POINT(Structure):
     _fields_ = [("x", c_ulong),
                 ("y", c_ulong)]
 
 class PyMouse(PyMouseMeta):
+    """MOUSEEVENTF_(button and action) constants 
+    are defined at win32con, buttonAction is that value"""
     def press(self, x, y, button = 1):
-        self.move(x, y)
-        blob[0].ii.mi.dwFlags = clicks[button]
-        windll.user32.SendInput(2,pointer(blob),sizeof(blob[0]))
-
+        buttonAction = 2**((2*button)-1)
+        self.move(x,y)
+        win32api.mouse_event(buttonAction, x, y)
+     
     def release(self, x, y, button = 1):
-        self.move(x, y)
-        blob[1].ii.mi.dwFlags = releases[button]
-        windll.user32.SendInput(2,pointer(blob),sizeof(blob[0]))
+        buttonAction = 2**((2*button))
+        self.move(x,y)
+        win32api.mouse_event(buttonAction, x, y)
 
     def move(self, x, y):
         windll.user32.SetCursorPos(x, y)
@@ -77,21 +51,15 @@ class PyMouse(PyMouseMeta):
         return width, height
 
 class PyMouseEvent(PyMouseEventMeta):
-    def __init__(self):
-        PyMouseEventMeta.__init__(self)
-        self.hm = pyHook.HookManager()
-
     def run(self):
-        self.hm.MouseAllButtons = self._click
-        self.hm.MouseMove = self._move
-        self.hm.HookMouse()
+        hm = pyHook.HookManager()
+        hm.MouseAllButtons = self._click
+        hm.MouseMove = self._move
+        hm.HookMouse()
+
         while self.state:
             sleep(0.01)
             pythoncom.PumpWaitingMessages()
-          
-    def stop(self):
-        self.hm.UnhookMouse()
-        self.state = False
 
     def _click(self, event):
         x,y = event.Position
@@ -113,4 +81,4 @@ class PyMouseEvent(PyMouseEventMeta):
     def _move(self, event):
         x,y = event.Position
         self.move(x, y)
-        return not self.captureMove
+        return not self.capture
