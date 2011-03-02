@@ -32,6 +32,5 @@ elif sys.platform == 'win32':
     from windows import PyMouse, PyMouseEvent
 
 else:
-    from . import unix
     from unix import PyMouse, PyMouseEvent
 
