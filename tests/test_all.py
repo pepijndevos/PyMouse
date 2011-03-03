@@ -11,6 +11,9 @@ on Ubuntu:
     sudo apt-get install python-setuptools
     sudo easy_install PyVirtualDisplay
 
+to start:
+
+    nosetests -v
 '''
 
 from nose.tools import eq_
@@ -79,8 +82,8 @@ class Test(TestCase):
             finally:
                 disp.stop()
 
+    #this fails with current version
     def test_event(self):
-        '''this fails with current version'''
         for size in screen_sizes:
             try:
                 disp = Display(visible=VISIBLE, size=size).start()
