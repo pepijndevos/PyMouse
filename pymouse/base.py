@@ -65,7 +65,7 @@ class PyMouseEventMeta(Thread):
         Thread.__init__(self)
         self.daemon = True
         self.capture = capture
-        self.capture = captureMove
+        self.captureMove = captureMove
         self.state = True
 
     def stop(self):
