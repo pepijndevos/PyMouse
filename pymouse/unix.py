@@ -20,8 +20,36 @@ from Xlib.ext.xtest import fake_input
 from Xlib.ext import record
 from Xlib.protocol import rq
 
-from base import PyMouseMeta, PyMouseEventMeta
+from base import PyMouseMeta, PyMouseEventMeta, MouseButtons
 
+
+def get_button_code(event_message):
+    """ Platform specific ! """
+    
+    try:
+        code = (None, 
+                MouseButtons.BUTTON_LEFT,
+                MouseButtons.BUTTON_MIDDLE, 
+                MouseButtons.BUTTON_RIGHT,
+                MouseButtons.BUTTON_SCROLL_UP,
+                MouseButtons.BUTTON_SCROLL_DOWN,
+                MouseButtons.BUTTON_SCROLL_LEFT,
+                MouseButtons.BUTTON_SCROLL_RIGHT,
+                MouseButtons.BUTTON_THUMB_BACK,
+                MouseButtons.BUTTON_THUMB_FORWARD)[event_message]
+                
+    except IndexError:
+        code = None
+        
+    return code
+
+
+def get_event_code(button_code):
+    """ Platform specific ! """
+    
+    return button_code
+    
+    
 
 class PyMouse(PyMouseMeta):
     def __init__(self):
@@ -31,12 +59,12 @@ class PyMouse(PyMouseMeta):
 
     def press(self, x, y, button = 1):
         self.move(x, y)
-        fake_input(self.display, X.ButtonPress, [None, 1, 3, 2, 4, 5][button])
+        fake_input(self.display, X.ButtonPress, get_event_code(button))
         self.display.sync()
 
     def release(self, x, y, button = 1):
         self.move(x, y)
-        fake_input(self.display, X.ButtonRelease, [None, 1, 3, 2, 4, 5][button])
+        fake_input(self.display, X.ButtonRelease, get_event_code(button))
         self.display.sync()
 
     def move(self, x, y):
@@ -92,10 +120,14 @@ class PyMouseEvent(PyMouseEventMeta):
         while len(data):
             event, data = rq.EventField(None).parse_binary_value(data, self.display.display, None, None)
 
+
+            
             if event.type == X.ButtonPress:
-                self.click(event.root_x, event.root_y, (None, 1, 3, 2, 3, 3, 3)[event.detail], True)
+                print event.detail
+                self.click(event.root_x, event.root_y, get_button_code(event.detail), True)
             elif event.type == X.ButtonRelease:
-                self.click(event.root_x, event.root_y, (None, 1, 3, 2, 3, 3, 3)[event.detail], False)
+                print event.detail
+                self.click(event.root_x, event.root_y, get_button_code(event.detail), False)
             else:
                 self.move(event.root_x, event.root_y)
 

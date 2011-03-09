@@ -22,6 +22,22 @@ See http://github.com/pepijndevos/PyMouse for more information.
 
 from threading import Thread
 
+
+class MouseButtons:
+    
+    BUTTON_LEFT = 1
+    BUTTON_MIDDLE = 2
+    BUTTON_RIGHT = 3
+    BUTTON_SCROLL_UP = 4
+    BUTTON_SCROLL_DOWN = 5
+    BUTTON_SCROLL_LEFT = 6
+    BUTTON_SCROLL_RIGHT = 7
+    BUTTON_THUMB_BACK = 8
+    BUTTON_THUMB_FORWARD = 9
+    
+     
+
+
 class PyMouseMeta(object):
 
     def press(self, x, y, button = 1):

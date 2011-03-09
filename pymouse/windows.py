@@ -15,10 +15,54 @@
 #   limitations under the License.
 
 from ctypes import *
-import win32api,win32con
-from base import PyMouseMeta, PyMouseEventMeta
+import win32api, win32con
+from base import PyMouseMeta, PyMouseEventMeta, MouseButtons
 import pythoncom, pyHook
 from time import sleep
+
+
+def get_button_code(event_message):
+    """ Platform specific ! """
+    
+    try:
+        if event_message == pyHook.HookConstants.WM_LBUTTONDOWN:
+           code = (MouseButtons.BUTTON_LEFT, True)
+        elif event_message == pyHook.HookConstants.WM_LBUTTONUP:
+           code = (MouseButtons.BUTTON_LEFT, False)
+        elif event_message == pyHook.HookConstants.WM_RBUTTONDOWN:
+           code = (MouseButtons.BUTTON_RIGHT, True)
+        elif event_message == pyHook.HookConstants.WM_RBUTTONUP:
+           code = (MouseButtons.BUTTON_RIGHT, False)
+        elif event_message == pyHook.HookConstants.WM_MBUTTONDOWN:
+           code = (MouseButtons.BUTTON_MIDDLE, True)
+        elif event_message == pyHook.HookConstants.WM_MBUTTONUP:
+           code = (MouseButtons.BUTTON_MIDDLE, False)
+                
+    except IndexError:
+        code = (None, False)
+        
+    return code
+
+
+def get_event_code(button_code):
+    """ Platform specific ! """
+    
+    # Windows only supports Left, Middle and Right buttons
+    if button_code not in (1, 2, 3):
+        raise ValueError("Event code not recognized!")
+    
+    # swap button 2 and 3, because Windows uses 3 for middle button and 2 for right button
+    if button_code == 2:
+        button_code == 3
+    elif button_code == 3:
+        button_code = 2
+        
+    code = 2 ** ((2 * button_code) - 1)
+    
+    return code
+    
+    
+    
 
 class POINT(Structure):
     _fields_ = [("x", c_ulong),
@@ -27,14 +71,14 @@ class POINT(Structure):
 class PyMouse(PyMouseMeta):
     """MOUSEEVENTF_(button and action) constants 
     are defined at win32con, buttonAction is that value"""
-    def press(self, x, y, button = 1):
-        buttonAction = 2**((2*button)-1)
-        self.move(x,y)
+    def press(self, x, y, button=1):
+        buttonAction = get_event_code(button)
+        self.move(x, y)
         win32api.mouse_event(buttonAction, x, y)
      
-    def release(self, x, y, button = 1):
-        buttonAction = 2**((2*button))
-        self.move(x,y)
+    def release(self, x, y, button=1):
+        buttonAction = get_event_code(button)
+        self.move(x, y)
         win32api.mouse_event(buttonAction, x, y)
 
     def move(self, x, y):
@@ -68,23 +112,16 @@ class PyMouseEvent(PyMouseEventMeta):
         self.state = False
 
     def _click(self, event):
-        x,y = event.Position
+        x, y = event.Position
 
-        if event.Message == pyHook.HookConstants.WM_LBUTTONDOWN:
-            self.click(x, y, 1, True)
-        elif event.Message == pyHook.HookConstants.WM_LBUTTONUP:
-            self.click(x, y, 1, False)
-        elif event.Message == pyHook.HookConstants.WM_RBUTTONDOWN:
-            self.click(x, y, 2, True)
-        elif event.Message == pyHook.HookConstants.WM_RBUTTONUP:
-            self.click(x, y, 2, False)
-        elif event.Message == pyHook.HookConstants.WM_MBUTTONDOWN:
-            self.click(x, y, 3, True)
-        elif event.Message == pyHook.HookConstants.WM_MBUTTONUP:
-            self.click(x, y, 3, False)
+        (button, state) = get_button_code(event.Message)
+        
+        if button is not None:
+            self.click(x, y, button, state)
+            
         return not self.capture
 
     def _move(self, event):
-        x,y = event.Position
+        x, y = event.Position
         self.move(x, y)
         return not self.captureMove

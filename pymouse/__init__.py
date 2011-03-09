@@ -34,3 +34,4 @@ elif sys.platform == 'win32':
 else:
     from unix import PyMouse, PyMouseEvent
 
+from base import MouseButtons

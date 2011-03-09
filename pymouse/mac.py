@@ -21,13 +21,44 @@ from base import PyMouseMeta, PyMouseEventMeta
 pressID = [None, kCGEventLeftMouseDown, kCGEventRightMouseDown, kCGEventOtherMouseDown]
 releaseID = [None, kCGEventLeftMouseUp, kCGEventRightMouseUp, kCGEventOtherMouseUp]
 
+
+
+def get_button_code(event_message):
+    """ Platform specific ! """
+    
+    if type in pressID:
+        code = pressID.index(type)
+        state = True
+    elif type in releaseID:
+        code = releaseID.index(type)
+        state = False
+    else:
+        code = None
+        state = False
+            
+    return (code, state)
+
+
+def get_event_code(button_code, state):
+    """ Platform specific ! """
+    
+    if state:
+        code = pressID[button_code]
+        
+    else:
+        code = releaseID[button_code]
+        
+    return code
+
+
+
 class PyMouse(PyMouseMeta):
-    def press(self, x, y, button = 1):
-        event = CGEventCreateMouseEvent(None, pressID[button], (x, y), button - 1)
+    def press(self, x, y, button=1):
+        event = CGEventCreateMouseEvent(None, get_event_code(button, True), (x, y), button - 1)
         CGEventPost(kCGHIDEventTap, event)
 
-    def release(self, x, y, button = 1):
-        event = CGEventCreateMouseEvent(None, releaseID[button], (x, y), button - 1)
+    def release(self, x, y, button=1):
+        event = CGEventCreateMouseEvent(None, get_event_code(button, False), (x, y), button - 1)
         CGEventPost(kCGHIDEventTap, event)
 
     def move(self, x, y):
@@ -48,12 +79,12 @@ class PyMouseEvent(PyMouseEventMeta):
             kCGSessionEventTap,
             kCGHeadInsertEventTap,
             kCGEventTapOptionDefault,
-            CGEventMaskBit(kCGEventMouseMoved) |
-            CGEventMaskBit(kCGEventLeftMouseDown) |
-            CGEventMaskBit(kCGEventLeftMouseUp) |
-            CGEventMaskBit(kCGEventRightMouseDown) |
-            CGEventMaskBit(kCGEventRightMouseUp) |
-            CGEventMaskBit(kCGEventOtherMouseDown) |
+            CGEventMaskBit(kCGEventMouseMoved) | 
+            CGEventMaskBit(kCGEventLeftMouseDown) | 
+            CGEventMaskBit(kCGEventLeftMouseUp) | 
+            CGEventMaskBit(kCGEventRightMouseDown) | 
+            CGEventMaskBit(kCGEventRightMouseUp) | 
+            CGEventMaskBit(kCGEventOtherMouseDown) | 
             CGEventMaskBit(kCGEventOtherMouseUp),
             self.handler,
             None)
@@ -68,10 +99,11 @@ class PyMouseEvent(PyMouseEventMeta):
 
     def handler(self, proxy, type, event, refcon):
         (x, y) = CGEventGetLocation(event)
-        if type in pressID:
-            self.click(x, y, pressID.index(type), True)
-        elif type in releaseID:
-            self.click(x, y, releaseID.index(type), False)
+        
+        (code, state) = get_button_code(type)
+        
+        if code is not None:
+            self.click(x, y, code, state)
         else:
             self.move(x, y)
         
