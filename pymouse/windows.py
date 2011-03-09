@@ -49,7 +49,7 @@ def get_event_code(button_code, state):
     
     # Windows only supports Left, Middle and Right buttons
     if button_code not in (1, 2, 3):
-        raise ValueError("Event code not recognized!")
+        raise ValueError("Button not supported")
     
     # swap button 2 and 3, because Windows uses 3 for middle button and 2 for right button
     if button_code == 2:

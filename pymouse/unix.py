@@ -39,7 +39,7 @@ def get_button_code(event_message):
                 MouseButtons.BUTTON_THUMB_FORWARD)[event_message]
                 
     except IndexError:
-        code = None
+        raise ValueError("Button not supported")
         
     return code
 

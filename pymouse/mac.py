@@ -57,7 +57,7 @@ def get_event_code(button_code, state):
     
     # Mac only supports Left, Middle and Right buttons
     if button_code not in (1, 2, 3):
-        raise ValueError("Event code not recognized!")
+        raise ValueError("Button not supported")
     
     
     if state:
