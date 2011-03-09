@@ -44,7 +44,7 @@ def get_button_code(event_message):
     return code
 
 
-def get_event_code(button_code):
+def get_event_code(button_code, state):
     """ Platform specific ! """
     
     # Windows only supports Left, Middle and Right buttons
@@ -56,8 +56,12 @@ def get_event_code(button_code):
         button_code == 3
     elif button_code == 3:
         button_code = 2
+    
+    if state:
+        code = 2 ** ((2 * button_code) - 1)
+    else:
+        code = 2 ** ((2 * button_code))
         
-    code = 2 ** ((2 * button_code) - 1)
     
     return code
     
@@ -72,12 +76,12 @@ class PyMouse(PyMouseMeta):
     """MOUSEEVENTF_(button and action) constants 
     are defined at win32con, buttonAction is that value"""
     def press(self, x, y, button=1):
-        buttonAction = get_event_code(button)
+        buttonAction = get_event_code(button, True)
         self.move(x, y)
         win32api.mouse_event(buttonAction, x, y)
      
     def release(self, x, y, button=1):
-        buttonAction = get_event_code(button)
+        buttonAction = get_event_code(button, False)
         self.move(x, y)
         win32api.mouse_event(buttonAction, x, y)
 
