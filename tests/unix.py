@@ -82,7 +82,6 @@ class Test(TestCase):
             finally:
                 disp.stop()
 
-    #this fails with current version
     def test_event(self):
         for size in screen_sizes:
             try:
@@ -90,12 +89,31 @@ class Test(TestCase):
                 mouse = PyMouse()
                 event = Event()
                 event.start()
+                # first move is ignored, why?
+                mouse.move(0, 0)
                 for p in positions:
                     event.pos = None
                     mouse.move(*p)
+                    time.sleep(0.1)
+                    print 'check ', expect_pos(p, size), '=', event.pos
                     eq_(expect_pos(p, size), event.pos)
                 event.stop()                
             finally:
                 disp.stop()
-        
-        
+    #this fails with current version
+    def test_1st_event(self):
+        size = (100, 100)
+        try:
+            disp = Display(visible=VISIBLE, size=size).start()
+            mouse = PyMouse()
+            event = Event()
+            event.start()
+            event.pos = None
+            mouse.move(10, 10)
+            time.sleep(0.1)
+            eq_((10, 10), event.pos)
+            event.stop()                
+        finally:
+            disp.stop()
+    
+    
