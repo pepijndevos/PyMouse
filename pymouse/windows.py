@@ -53,7 +53,7 @@ def get_event_code(button_code, state):
     
     # swap button 2 and 3, because Windows uses 3 for middle button and 2 for right button
     if button_code == 2:
-        button_code == 3
+        button_code = 3
     elif button_code == 3:
         button_code = 2
     
