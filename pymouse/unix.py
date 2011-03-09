@@ -123,10 +123,8 @@ class PyMouseEvent(PyMouseEventMeta):
 
             
             if event.type == X.ButtonPress:
-                print event.detail
                 self.click(event.root_x, event.root_y, get_button_code(event.detail), True)
             elif event.type == X.ButtonRelease:
-                print event.detail
                 self.click(event.root_x, event.root_y, get_button_code(event.detail), False)
             else:
                 self.move(event.root_x, event.root_y)
