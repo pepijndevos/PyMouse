@@ -16,7 +16,7 @@
 
 from Quartz import *
 from AppKit import NSEvent
-from base import PyMouseMeta, PyMouseEventMeta
+from base import PyMouseMeta, PyMouseEventMeta, MouseButtons
 
 pressID = [None, kCGEventLeftMouseDown, kCGEventRightMouseDown, kCGEventOtherMouseDown]
 releaseID = [None, kCGEventLeftMouseUp, kCGEventRightMouseUp, kCGEventOtherMouseUp]
@@ -26,11 +26,24 @@ releaseID = [None, kCGEventLeftMouseUp, kCGEventRightMouseUp, kCGEventOtherMouse
 def get_button_code(event_message):
     """ Platform specific ! """
     
-    if type in pressID:
-        code = pressID.index(type)
+    
+    if event_message == kCGEventLeftMouseDown:
+        code = MouseButtons.BUTTON_LEFT
         state = True
-    elif type in releaseID:
-        code = releaseID.index(type)
+    elif event_message == kCGEventLeftMouseUp:
+        code = MouseButtons.BUTTON_LEFT
+        state = False
+    elif event_message == kCGEventRightMouseDown:
+        code = MouseButtons.BUTTON_RIGHT
+        state = True
+    elif event_message == kCGEventRightMouseUp:
+        code = MouseButtons.BUTTON_RIGHT
+        state = False
+    elif event_message == kCGEventOtherMouseDown:
+        code = MouseButtons.BUTTON_MIDDLE
+        state = True
+    elif event_message == kCGEventOtherMouseUp:
+        code = MouseButtons.BUTTON_MIDDLE
         state = False
     else:
         code = None
@@ -42,9 +55,13 @@ def get_button_code(event_message):
 def get_event_code(button_code, state):
     """ Platform specific ! """
     
+    # Mac only supports Left, Middle and Right buttons
+    if button_code not in (1, 2, 3):
+        raise ValueError("Event code not recognized!")
+    
+    
     if state:
         code = pressID[button_code]
-        
     else:
         code = releaseID[button_code]
         
