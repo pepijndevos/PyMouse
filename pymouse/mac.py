@@ -22,9 +22,9 @@ pressID = [None, kCGEventLeftMouseDown, kCGEventRightMouseDown, kCGEventOtherMou
 releaseID = [None, kCGEventLeftMouseUp, kCGEventRightMouseUp, kCGEventOtherMouseUp]
 
 class PyMouse(PyMouseMeta):
-    def _button_event(self, x, y, button_event, button, count):
+    def _button_event(self, x, y, button_event, button, event_series_num):
         event = CGEventCreateMouseEvent(None, button_event, (x, y), button - 1)
-        CGEventSetIntegerValueField(event, kCGMouseEventClickState, count)
+        CGEventSetIntegerValueField(event, kCGMouseEventClickState, event_series_num)
         CGEventPost(kCGHIDEventTap, event)
 
     def press(self, x, y, button = 1):
@@ -34,6 +34,8 @@ class PyMouse(PyMouseMeta):
         self._button_event(x, y, releaseID[button], button, 1)
 
     def doubleclick(self, x, y, button=1):
+        self._button_event(x, y, pressID[button], button, 1)
+        self._button_event(x, y, releaseID[button], button, 1)
         self._button_event(x, y, pressID[button], button, 2)
         self._button_event(x, y, releaseID[button], button, 2)
 
