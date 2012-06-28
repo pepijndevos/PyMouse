@@ -22,18 +22,24 @@ pressID = [None, kCGEventLeftMouseDown, kCGEventRightMouseDown, kCGEventOtherMou
 releaseID = [None, kCGEventLeftMouseUp, kCGEventRightMouseUp, kCGEventOtherMouseUp]
 
 class PyMouse(PyMouseMeta):
-    def press(self, x, y, button = 1):
-        event = CGEventCreateMouseEvent(None, pressID[button], (x, y), button - 1)
+    def _button_event(self, x, y, button_event, button, count):
+        event = CGEventCreateMouseEvent(None, button_event, (x, y), button - 1)
+        CGEventSetIntegerValueField(event, kCGMouseEventClickState, count)
         CGEventPost(kCGHIDEventTap, event)
 
+    def press(self, x, y, button = 1):
+        self._button_event(x, y, pressID[button], button, 1)
+
     def release(self, x, y, button = 1):
-        event = CGEventCreateMouseEvent(None, releaseID[button], (x, y), button - 1)
-        CGEventPost(kCGHIDEventTap, event)
+        self._button_event(x, y, releaseID[button], button, 1)
+
+    def doubleclick(self, x, y, button=1):
+        self._button_event(x, y, pressID[button], button, 2)
+        self._button_event(x, y, releaseID[button], button, 2)
 
     def move(self, x, y):
         move = CGEventCreateMouseEvent(None, kCGEventMouseMoved, (x, y), 0)
         CGEventPost(kCGHIDEventTap, move)
-        
 
     def position(self):
         loc = NSEvent.mouseLocation()

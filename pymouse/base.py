@@ -42,7 +42,11 @@ class PyMouseMeta(object):
 
         self.press(x, y, button)
         self.release(x, y, button)
- 
+
+    def doubleclick(self, x, y, button=1):
+        self.click(x, y, button)
+        self.click(x, y, button)
+
     def move(self, x, y):
         """Move the mouse to a givven x and y"""
 
