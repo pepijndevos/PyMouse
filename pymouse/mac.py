@@ -16,24 +16,32 @@
 
 from Quartz import *
 from AppKit import NSEvent
-from base import PyMouseMeta, PyMouseEventMeta
+from pymouse.base import PyMouseMeta
 
 pressID = [None, kCGEventLeftMouseDown, kCGEventRightMouseDown, kCGEventOtherMouseDown]
 releaseID = [None, kCGEventLeftMouseUp, kCGEventRightMouseUp, kCGEventOtherMouseUp]
 
 class PyMouse(PyMouseMeta):
-    def press(self, x, y, button = 1):
-        event = CGEventCreateMouseEvent(None, pressID[button], (x, y), button - 1)
+    def _button_event(self, x, y, button_event, button, event_series_num):
+        event = CGEventCreateMouseEvent(None, button_event, (x, y), button - 1)
+        CGEventSetIntegerValueField(event, kCGMouseEventClickState, event_series_num)
         CGEventPost(kCGHIDEventTap, event)
 
+    def press(self, x, y, button = 1):
+        self._button_event(x, y, pressID[button], button, 1)
+
     def release(self, x, y, button = 1):
-        event = CGEventCreateMouseEvent(None, releaseID[button], (x, y), button - 1)
-        CGEventPost(kCGHIDEventTap, event)
+        self._button_event(x, y, releaseID[button], button, 1)
+
+    def doubleclick(self, x, y, button=1):
+        self._button_event(x, y, pressID[button], button, 1)
+        self._button_event(x, y, releaseID[button], button, 1)
+        self._button_event(x, y, pressID[button], button, 2)
+        self._button_event(x, y, releaseID[button], button, 2)
 
     def move(self, x, y):
         move = CGEventCreateMouseEvent(None, kCGEventMouseMoved, (x, y), 0)
         CGEventPost(kCGHIDEventTap, move)
-        
 
     def position(self):
         loc = NSEvent.mouseLocation()
@@ -41,41 +49,3 @@ class PyMouse(PyMouseMeta):
 
     def screen_size(self):
         return CGDisplayPixelsWide(0), CGDisplayPixelsHigh(0)
-
-class PyMouseEvent(PyMouseEventMeta):
-    def run(self):
-        tap = CGEventTapCreate(
-            kCGSessionEventTap,
-            kCGHeadInsertEventTap,
-            kCGEventTapOptionDefault,
-            CGEventMaskBit(kCGEventMouseMoved) |
-            CGEventMaskBit(kCGEventLeftMouseDown) |
-            CGEventMaskBit(kCGEventLeftMouseUp) |
-            CGEventMaskBit(kCGEventRightMouseDown) |
-            CGEventMaskBit(kCGEventRightMouseUp) |
-            CGEventMaskBit(kCGEventOtherMouseDown) |
-            CGEventMaskBit(kCGEventOtherMouseUp),
-            self.handler,
-            None)
-
-        loopsource = CFMachPortCreateRunLoopSource(None, tap, 0)
-        loop = CFRunLoopGetCurrent()
-        CFRunLoopAddSource(loop, loopsource, kCFRunLoopDefaultMode)
-        CGEventTapEnable(tap, True)
-
-        while self.state:
-            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 5, False)
-
-    def handler(self, proxy, type, event, refcon):
-        (x, y) = CGEventGetLocation(event)
-        if type in pressID:
-            self.click(x, y, pressID.index(type), True)
-        elif type in releaseID:
-            self.click(x, y, releaseID.index(type), False)
-        else:
-            self.move(x, y)
-        
-        if self.capture:
-            CGEventSetType(event, kCGEventNull)
-
-        return event
