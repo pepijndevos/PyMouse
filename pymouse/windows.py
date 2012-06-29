@@ -19,8 +19,8 @@ import win32api,win32con
 from pymouse.base import PyMouseMeta, PyMouseEventMeta
 
 class POINT(Structure):
-    _fields_ = [("x", c_ulong),
-                ("y", c_ulong)]
+    _fields_ = [("x", c_long),
+                ("y", c_long)]
 
 class PyMouse(PyMouseMeta):
     """MOUSEEVENTF_(button and action) constants
