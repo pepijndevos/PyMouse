@@ -30,18 +30,18 @@ elif sys.platform == 'darwin':
     try:
         from pymouse.events.mac import PyMouseEvent
     except ImportError:
-        from pymouse.base import PyMouseEventMeta as PyMouseEvent
+        pass
 
 elif sys.platform == 'win32':
     from pymouse.windows import PyMouse
     try:
         from pymouse.events.windows import PyMouseEvent
     except ImportError:
-        from pymouse.base import PyMouseEventMeta as PyMouseEvent
+        pass
 
 else:
     from pymouse.unix import PyMouse
     try:
         from pymouse.events.unix import PyMouseEvent
     except ImportError:
-        from pymouse.base import PyMouseEventMeta as PyMouseEvent
+        pass
