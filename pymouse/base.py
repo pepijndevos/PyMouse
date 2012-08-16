@@ -36,12 +36,14 @@ class PyMouseMeta(object):
 
         raise NotImplementedError
 
-    def click(self, x, y, button = 1):
-        """Click the mouse on a givven x, y and button.
-        Button is defined as 1 = left, 2 = right, 3 = middle."""
+    def click(self, x, y, button = 1, n = 1):
+        """Click a mouse button n times on a given x, y.
+        Button is defined as 1 = left, 2 = right, 3 = middle.
+        """
 
-        self.press(x, y, button)
-        self.release(x, y, button)
+        for i in range(n):
+            self.press(x, y, button)
+            self.release(x, y, button)
  
     def move(self, x, y):
         """Move the mouse to a givven x and y"""
