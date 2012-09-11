@@ -24,10 +24,10 @@ from base import PyMouseMeta, PyMouseEventMeta
 
 
 class PyMouse(PyMouseMeta):
-    def __init__(self):
+    def __init__(self, display=':0'):
         PyMouseMeta.__init__(self)
-        self.display = Display()
-        self.display2 = Display()
+        self.display = Display(display)
+        self.display2 = Display(display)
 
     def press(self, x, y, button = 1):
         self.move(x, y)
@@ -53,10 +53,10 @@ class PyMouse(PyMouseMeta):
         return width, height
 
 class PyMouseEvent(PyMouseEventMeta):
-    def __init__(self):
+    def __init__(self, display=':0'):
         PyMouseEventMeta.__init__(self)
-        self.display = Display()
-        self.display2 = Display()
+        self.display = Display(display)
+        self.display2 = Display(display)
         self.ctx = self.display2.record_create_context(
             0,
             [record.AllClients],
