@@ -24,7 +24,7 @@ from base import PyMouseMeta, PyMouseEventMeta
 
 
 class PyMouse(PyMouseMeta):
-    def __init__(self, display=':0'):
+    def __init__(self, display=None):
         PyMouseMeta.__init__(self)
         self.display = Display(display)
         self.display2 = Display(display)
@@ -53,7 +53,7 @@ class PyMouse(PyMouseMeta):
         return width, height
 
 class PyMouseEvent(PyMouseEventMeta):
-    def __init__(self, display=':0'):
+    def __init__(self, display=None):
         PyMouseEventMeta.__init__(self)
         self.display = Display(display)
         self.display2 = Display(display)
