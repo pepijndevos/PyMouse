@@ -64,56 +64,29 @@ def expect_pos(pos, size):
 class Test(TestCase):
     def test_size(self):
         for size in screen_sizes:
-            try:
-                disp = Display(visible=VISIBLE, size=size).start()
+            with Display(visible=VISIBLE, size=size):
                 mouse = PyMouse()
                 eq_(size, mouse.screen_size())
-            finally:
-                disp.stop()
 
     def test_move(self):
         for size in screen_sizes:
-            try:
-                disp = Display(visible=VISIBLE, size=size).start()
+            with Display(visible=VISIBLE, size=size):
                 mouse = PyMouse()
                 for p in positions:
                     mouse.move(*p)
                     eq_(expect_pos(p, size), mouse.position())
-            finally:
-                disp.stop()
 
     def test_event(self):
         for size in screen_sizes:
-            try:
-                disp = Display(visible=VISIBLE, size=size).start()
+            with Display(visible=VISIBLE, size=size):
+                time.sleep(3)  # TODO: how long should we wait?
                 mouse = PyMouse()
                 event = Event()
                 event.start()
-                # first move is ignored, why?
-                mouse.move(0, 0)
                 for p in positions:
                     event.pos = None
                     mouse.move(*p)
-                    time.sleep(0.1)
+                    time.sleep(0.1)  # TODO: how long should we wait?
                     print 'check ', expect_pos(p, size), '=', event.pos
                     eq_(expect_pos(p, size), event.pos)
                 event.stop()                
-            finally:
-                disp.stop()
-    #this fails with current version
-    def test_1st_event(self):
-        size = (100, 100)
-        try:
-            disp = Display(visible=VISIBLE, size=size).start()
-            mouse = PyMouse()
-            event = Event()
-            event.start()
-            event.pos = None
-            mouse.move(10, 10)
-            time.sleep(0.1)
-            eq_((10, 10), event.pos)
-            event.stop()                
-        finally:
-            disp.stop()
-    
-    
