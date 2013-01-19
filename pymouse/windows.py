@@ -46,8 +46,8 @@ class PyMouse(PyMouseMeta):
         return pt.x, pt.y
 
     def screen_size(self):
-        width = GetSystemMetrics(0)
-        height = GetSystemMetrics(1)
+        width = windll.user32.GetSystemMetrics(0)
+        height = windll.user32.GetSystemMetrics(1)
         return width, height
 
 class PyMouseEvent(PyMouseEventMeta):
