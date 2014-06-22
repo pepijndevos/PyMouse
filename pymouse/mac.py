@@ -14,60 +14,60 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from Quartz import *
+import Quartz
 from AppKit import NSEvent
 from base import PyMouseMeta, PyMouseEventMeta
 
-pressID = [None, kCGEventLeftMouseDown, kCGEventRightMouseDown, kCGEventOtherMouseDown]
-releaseID = [None, kCGEventLeftMouseUp, kCGEventRightMouseUp, kCGEventOtherMouseUp]
+pressID = [None, Quartz.kCGEventLeftMouseDown, Quartz.kCGEventRightMouseDown, Quartz.kCGEventOtherMouseDown]
+releaseID = [None, Quartz.kCGEventLeftMouseUp, Quartz.kCGEventRightMouseUp, Quartz.kCGEventOtherMouseUp]
 
 class PyMouse(PyMouseMeta):
     def press(self, x, y, button = 1):
-        event = CGEventCreateMouseEvent(None, pressID[button], (x, y), button - 1)
-        CGEventPost(kCGHIDEventTap, event)
+        event = Quartz.CGEventCreateMouseEvent(None, pressID[button], (x, y), button - 1)
+        Quartz.CGEventPost(Quartz.kCGHIDEventTap, event)
 
     def release(self, x, y, button = 1):
-        event = CGEventCreateMouseEvent(None, releaseID[button], (x, y), button - 1)
-        CGEventPost(kCGHIDEventTap, event)
+        event = Quartz.CGEventCreateMouseEvent(None, releaseID[button], (x, y), button - 1)
+        Quartz.CGEventPost(Quartz.kCGHIDEventTap, event)
 
     def move(self, x, y):
-        move = CGEventCreateMouseEvent(None, kCGEventMouseMoved, (x, y), 0)
-        CGEventPost(kCGHIDEventTap, move)
+        move = Quartz.CGEventCreateMouseEvent(None, Quartz.kCGEventMouseMoved, (x, y), 0)
+        Quartz.CGEventPost(Quartz.kCGHIDEventTap, move)
         
 
     def position(self):
         loc = NSEvent.mouseLocation()
-        return loc.x, CGDisplayPixelsHigh(0) - loc.y
+        return loc.x, Quartz.CGDisplayPixelsHigh(0) - loc.y
 
     def screen_size(self):
-        return CGDisplayPixelsWide(0), CGDisplayPixelsHigh(0)
+        return Quartz.CGDisplayPixelsWide(0), Quartz.CGDisplayPixelsHigh(0)
 
 class PyMouseEvent(PyMouseEventMeta):
     def run(self):
-        tap = CGEventTapCreate(
-            kCGSessionEventTap,
-            kCGHeadInsertEventTap,
-            kCGEventTapOptionDefault,
-            CGEventMaskBit(kCGEventMouseMoved) |
-            CGEventMaskBit(kCGEventLeftMouseDown) |
-            CGEventMaskBit(kCGEventLeftMouseUp) |
-            CGEventMaskBit(kCGEventRightMouseDown) |
-            CGEventMaskBit(kCGEventRightMouseUp) |
-            CGEventMaskBit(kCGEventOtherMouseDown) |
-            CGEventMaskBit(kCGEventOtherMouseUp),
+        tap = Quartz.CGEventTapCreate(
+            Quartz.kCGSessionEventTap,
+            Quartz.kCGHeadInsertEventTap,
+            Quartz.kCGEventTapOptionDefault,
+            Quartz.CGEventMaskBit(Quartz.kCGEventMouseMoved) |
+            Quartz.CGEventMaskBit(Quartz.kCGEventLeftMouseDown) |
+            Quartz.CGEventMaskBit(Quartz.kCGEventLeftMouseUp) |
+            Quartz.CGEventMaskBit(Quartz.kCGEventRightMouseDown) |
+            Quartz.CGEventMaskBit(Quartz.kCGEventRightMouseUp) |
+            Quartz.CGEventMaskBit(Quartz.kCGEventOtherMouseDown) |
+            Quartz.CGEventMaskBit(Quartz.kCGEventOtherMouseUp),
             self.handler,
             None)
 
-        loopsource = CFMachPortCreateRunLoopSource(None, tap, 0)
-        loop = CFRunLoopGetCurrent()
-        CFRunLoopAddSource(loop, loopsource, kCFRunLoopDefaultMode)
-        CGEventTapEnable(tap, True)
+        loopsource = Quartz.CFMachPortCreateRunLoopSource(None, tap, 0)
+        loop = Quartz.CFRunLoopGetCurrent()
+        Quartz.CFRunLoopAddSource(loop, loopsource, Quartz.kCFRunLoopDefaultMode)
+        Quartz.CGEventTapEnable(tap, True)
 
         while self.state:
-            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 5, False)
+            Quartz.CFRunLoopRunInMode(Quartz.kCFRunLoopDefaultMode, 5, False)
 
     def handler(self, proxy, type, event, refcon):
-        (x, y) = CGEventGetLocation(event)
+        (x, y) = Quartz.CGEventGetLocation(event)
         if type in pressID:
             self.click(x, y, pressID.index(type), True)
         elif type in releaseID:
@@ -76,6 +76,6 @@ class PyMouseEvent(PyMouseEventMeta):
             self.move(x, y)
         
         if self.capture:
-            CGEventSetType(event, kCGEventNull)
+            Quartz.CGEventSetType(event, Quartz.kCGEventNull)
 
         return event
