@@ -23,6 +23,8 @@ behavior when import via from ... import *.
 import contextlib
 import time
 
+from nose import SkipTest
+
 @contextlib.contextmanager
 def check_execution_time(description, max_seconds):
 	start_time = time.time()
@@ -33,6 +35,8 @@ def check_execution_time(description, max_seconds):
 		raise Exception("Took too long to complete %s" % description)
 
 def test_pymouse_import_time():
+	# skip this test by default – call nosetests with --no-skip to enable
+	raise SkipTest()
 	with check_execution_time("importing pymouse", max_seconds=3):
 		import pymouse
 
