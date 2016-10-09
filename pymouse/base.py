@@ -45,6 +45,16 @@ class PyMouseMeta(object):
             self.press(x, y, button)
             self.release(x, y, button)
  
+    def drag(self, x1, y1, x2, y2, button = 1, drop = True):
+        """Press a button and drag the mouse from x1, y1 to x2, y2.
+        Release the button if drop evaluates to True.
+        Button is defined as 1 = left, 2 = right, 3 = middle."""
+
+        self.press(x1, y1, button)
+        self.move(x2, y2)
+        if drop:
+            self.release(x2, y2, button)
+
     def move(self, x, y):
         """Move the mouse to a givven x and y"""
 
