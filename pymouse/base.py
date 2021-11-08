@@ -25,13 +25,13 @@ from threading import Thread
 class PyMouseMeta(object):
 
     def press(self, x, y, button = 1):
-        """Press the mouse on a givven x, y and button.
+        """Press the mouse on a given x, y and button.
         Button is defined as 1 = left, 2 = right, 3 = middle."""
 
         raise NotImplementedError
 
     def release(self, x, y, button = 1):
-        """Release the mouse on a givven x, y and button.
+        """Release the mouse on a given x, y and button.
         Button is defined as 1 = left, 2 = right, 3 = middle."""
 
         raise NotImplementedError
@@ -46,7 +46,7 @@ class PyMouseMeta(object):
             self.release(x, y, button)
  
     def move(self, x, y):
-        """Move the mouse to a givven x and y"""
+        """Move the mouse to a given x and y"""
 
         raise NotImplementedError
 
