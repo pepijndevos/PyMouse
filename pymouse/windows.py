@@ -17,7 +17,9 @@
 from ctypes import *
 import win32api,win32con
 from base import PyMouseMeta, PyMouseEventMeta
-import pythoncom, pyHook
+import pythoncom
+import pymouse_pyhook3 as pyHook
+
 from time import sleep
 
 class POINT(Structure):
