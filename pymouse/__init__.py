@@ -29,7 +29,7 @@ elif sys.platform == 'darwin':
     from mac import PyMouse, PyMouseEvent
 
 elif sys.platform == 'win32':
-    from windows import PyMouse, PyMouseEvent
+    from .windows import PyMouse, PyMouseEvent
 
 else:
     from unix import PyMouse, PyMouseEvent
